@@ -1,0 +1,6 @@
+framework module Pods_MoPub_Header_Bidding_Demo {
+  umbrella header "Pods-MoPub Header Bidding Demo-umbrella.h"
+
+  export *
+  module * { export * }
+}

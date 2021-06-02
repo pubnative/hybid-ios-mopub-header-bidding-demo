@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-MoPub Header Bidding Demo/Pods-MoPub Header Bidding Demo-frameworks.sh
+${BUILT_PRODUCTS_DIR}/HyBid/HyBid.framework
+${BUILT_PRODUCTS_DIR}/mopub-ios-sdk/MoPubSDK.framework
+${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Mopub/OMSDK_Mopub.framework/OMSDK_Mopub

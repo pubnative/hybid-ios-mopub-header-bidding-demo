@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ral-Bl-H6i">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Integration Demo-->
+        <scene sceneID="SFK-4i-XUH">
+            <objects>
+                <viewController id="8Sz-OK-9SY" customClass="ViewController" customModule="Standalone_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="U0m-hp-3OS">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YKu-sA-Rxv" userLabel="Standalone Button">
+                                <rect key="frame" x="16" y="125" width="382" height="33"/>
+                                <color key="backgroundColor" red="0.85098618270000004" green="0.85097014900000001" blue="0.85098105670000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <bool key="isElement" value="NO"/>
+                                </accessibility>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="33" id="Kfd-gp-Sie"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal" title="MoPub Header Bidding">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <state key="selected">
+                                    <color key="titleColor" red="0.44761112330000002" green="0.097065538169999993" blue="0.48637124900000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <variation key="heightClass=compact">
+                                    <mask key="constraints">
+                                        <exclude reference="Kfd-gp-Sie"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <segue destination="KGh-64-cLm" kind="show" id="etc-Dd-ZRk"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Integration" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YgJ-Bb-my3" userLabel="Format">
+                                <rect key="frame" x="16" y="96" width="67" height="21"/>
+                                <accessibility key="accessibilityConfiguration" identifier="formatLabel" label="Format Label"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="bJU-NP-diC"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="heightClass=compact">
+                                    <mask key="constraints">
+                                        <exclude reference="bJU-NP-diC"/>
+                                    </mask>
+                                </variation>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="sg8-ll-HnP"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="YKu-sA-Rxv" firstAttribute="leading" secondItem="sg8-ll-HnP" secondAttribute="leading" constant="16" id="9et-iE-afQ"/>
+                            <constraint firstItem="YgJ-Bb-my3" firstAttribute="top" secondItem="sg8-ll-HnP" secondAttribute="top" constant="8" id="Bnd-dN-QeE"/>
+                            <constraint firstItem="YgJ-Bb-my3" firstAttribute="leading" secondItem="sg8-ll-HnP" secondAttribute="leading" constant="16" id="CPz-HC-9lf"/>
+                            <constraint firstItem="YKu-sA-Rxv" firstAttribute="top" secondItem="YgJ-Bb-my3" secondAttribute="bottom" constant="8" id="Pt6-Rp-apu"/>
+                            <constraint firstItem="sg8-ll-HnP" firstAttribute="trailing" secondItem="YKu-sA-Rxv" secondAttribute="trailing" constant="16" id="ZC0-0q-FFf"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Integration Demo" id="dN6-jH-5at"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mpk-BJ-Mhn" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="850.76923076923072" y="78.909952606635073"/>
+        </scene>
+        <!--MoPubHeaderBidding-->
+        <scene sceneID="max-7k-TnI">
+            <objects>
+                <viewControllerPlaceholder storyboardName="MoPubHeaderBidding" id="KGh-64-cLm" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="RtT-Zt-Rjk"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="V9a-LW-nv6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1456" y="78"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="xU3-JL-R8o">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ral-Bl-H6i" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Yo0-8W-TQv">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="8Sz-OK-9SY" kind="relationship" relationship="rootViewController" id="tZL-fn-3PM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hKZ-v0-dSr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-78.461538461538453" y="78.909952606635073"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

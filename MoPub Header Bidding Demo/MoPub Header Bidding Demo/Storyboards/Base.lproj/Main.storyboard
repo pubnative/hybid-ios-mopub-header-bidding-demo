@@ -11,17 +11,15 @@
         <!--Integration Demo-->
         <scene sceneID="SFK-4i-XUH">
             <objects>
-                <viewController id="8Sz-OK-9SY" customClass="ViewController" customModule="Standalone_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="8Sz-OK-9SY" customClass="ViewController" customModule="MoPub_Header_Bidding_Demo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0m-hp-3OS">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YKu-sA-Rxv" userLabel="Standalone Button">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YKu-sA-Rxv" userLabel="MoPub Header Bidding Button">
                                 <rect key="frame" x="16" y="125" width="382" height="33"/>
                                 <color key="backgroundColor" red="0.85098618270000004" green="0.85097014900000001" blue="0.85098105670000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <accessibility key="accessibilityConfiguration">
-                                    <bool key="isElement" value="NO"/>
-                                </accessibility>
+                                <accessibility key="accessibilityConfiguration" identifier="moPubHeaderBiddingButton" label="MoPub Header Bidding Button"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="33" id="Kfd-gp-Sie"/>
                                 </constraints>
@@ -42,9 +40,9 @@
                                     <segue destination="KGh-64-cLm" kind="show" id="etc-Dd-ZRk"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Integration" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YgJ-Bb-my3" userLabel="Format">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Integration" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YgJ-Bb-my3" userLabel="Integration">
                                 <rect key="frame" x="16" y="96" width="67" height="21"/>
-                                <accessibility key="accessibilityConfiguration" identifier="formatLabel" label="Format Label"/>
+                                <accessibility key="accessibilityConfiguration" identifier="integrationLabel" label="Integration Label"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="bJU-NP-diC"/>
                                 </constraints>

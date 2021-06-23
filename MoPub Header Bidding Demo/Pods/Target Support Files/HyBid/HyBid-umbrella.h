@@ -129,6 +129,7 @@
 #import "HyBidRemoteConfigRequest.h"
 #import "PNLiteRequestInspector.h"
 #import "PNLiteRequestInspectorModel.h"
+#import "HyBidSignalDataModel.h"
 #import "HyBidVisibilityTracker.h"
 #import "PNLiteImpressionTracker.h"
 #import "PNLiteImpressionTrackerItem.h"

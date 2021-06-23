@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 PubNative. All rights reserved.
+//  Copyright © 2021 PubNative. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,24 @@
 //  THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
-#import "HyBidAd.h"
+#import "HyBidSignalDataModel.h"
 
-@protocol HyBidSignalDataProcessorDelegate<NSObject>
+@implementation HyBidSignalDataModel
 
-- (void)signalDataDidFinishWithAd:(HyBidAd *)ad;
-- (void)signalDataDidFailWithError:(NSError *)error;
+- (void)dealloc {
+    self.status = nil;
+    self.tagid = nil;
+    self.admurl = nil;
+}
 
-@end
-
-@interface HyBidSignalDataProcessor : NSObject
-
-@property (nonatomic, weak) NSObject <HyBidSignalDataProcessorDelegate> *delegate;
-
-- (void)processSignalData:(NSString *)signalDataString;
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
+    self = [super initWithDictionary:dictionary];
+    if (self) {
+        self.status = dictionary[@"status"];
+        self.tagid = dictionary[@"tagid"];
+        self.admurl = dictionary[@"admurl"];
+    }
+    return self;
+}
 
 @end

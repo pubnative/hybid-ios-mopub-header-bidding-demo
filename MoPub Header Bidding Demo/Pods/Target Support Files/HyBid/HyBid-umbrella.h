@@ -66,6 +66,7 @@
 #import "PNLiteAdPresenterDecorator.h"
 #import "PNLiteMRAIDBannerPresenter.h"
 #import "HyBidAdRequest.h"
+#import "HyBidDisplayManager.h"
 #import "HyBidRequestParameter.h"
 #import "PNLiteAdFactory.h"
 #import "PNLiteAdRequestModel.h"

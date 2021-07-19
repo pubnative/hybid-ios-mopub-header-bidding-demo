@@ -43,6 +43,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         HyBid.setTargeting(targeting)
 // Approach A - Step 10: Set AppStore App ID (iOS14 +)
         HyBid.setAppStoreAppID(appStoreID)
+// Approach A Step 11: Set HyBid log level (Optional)
+        HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         
 /*
 // Approach B - Step 3: Setup & Initialize MoPub SDK and using MoPub's MPMoPubConfiguration, initialize HyBid as well
@@ -67,6 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyBid.setTargeting(targeting)
             // Approach B - Step 9: Set AppStore App ID (iOS14 +)
             HyBid.setAppStoreAppID(self.appStoreID)
+            // Approach B Step 10: Set HyBid log level (Optional)
+            HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         }
 */
         return true

@@ -37,6 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<MPVideoPlayerDelegate> videoPlayerDelegate;
 
+#pragma mark - Interruptions
+
+@property (nonatomic, assign) MPFullscreenAdInterruption interruptions;
+
+- (void)appDidEnterBackground:(NSNotification *)notification;
+- (void)appWillEnterForeground:(NSNotification *)notification;
+
 @end
 
 NS_ASSUME_NONNULL_END

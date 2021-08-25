@@ -224,6 +224,7 @@
         MPFullscreenAdAdapter *adapter = (MPFullscreenAdAdapter *)object;
         self.adapter = adapter;
         adapter.adapterDelegate = self;
+        adapter.adUnitId = self.adUnitId;
         [adapter getAdWithConfiguration:configuration targeting:self.targeting];
     }
     else { // unrecognized ad adapter

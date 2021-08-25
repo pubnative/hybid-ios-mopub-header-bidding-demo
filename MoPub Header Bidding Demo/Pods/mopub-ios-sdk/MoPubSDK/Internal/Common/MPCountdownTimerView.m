@@ -39,7 +39,6 @@ static NSString * const kAnimationKey = @"Timer";
 @property (nonatomic, strong) CAShapeLayer * backgroundRingLayer;
 @property (nonatomic, strong) CAShapeLayer * animatingRingLayer;
 @property (nonatomic, strong) UILabel * countdownLabel;
-@property (nonatomic, strong) NSNotificationCenter *notificationCenter;
 
 @end
 
@@ -57,7 +56,6 @@ static NSString * const kAnimationKey = @"Timer";
         _completionBlock = completion;
         _remainingSeconds = seconds;
         _timer = nil; // timer instantiation is deferred to `start`
-        _notificationCenter = [NSNotificationCenter defaultCenter];
 
         CGPoint ringCenter = CGPointMake([MPCountdownTimerView intrinsicContentDimension] / 2,
                                          [MPCountdownTimerView intrinsicContentDimension] / 2);
@@ -128,6 +126,10 @@ static NSString * const kAnimationKey = @"Timer";
 
 #pragma mark - Timer
 
+- (BOOL)isCountdownActive {
+    return self.timer.isCountdownActive;
+}
+
 - (BOOL)hasStarted {
     return self.timer != nil;
 }
@@ -137,16 +139,6 @@ static NSString * const kAnimationKey = @"Timer";
         MPLogDebug(@"MPCountdownTimerView cannot start again since it has started");
         return;
     }
-
-    // Observer app state for automatic pausing and resuming
-    [self.notificationCenter addObserver:self
-                                selector:@selector(pause)
-                                    name:UIApplicationDidEnterBackgroundNotification
-                                  object:nil];
-    [self.notificationCenter addObserver:self
-                                selector:@selector(resume)
-                                    name:UIApplicationWillEnterForegroundNotification
-                                  object:nil];
 
     // This animation is the ring disappearing clockwise from full (12 o'clock) to empty.
     CABasicAnimation * animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];

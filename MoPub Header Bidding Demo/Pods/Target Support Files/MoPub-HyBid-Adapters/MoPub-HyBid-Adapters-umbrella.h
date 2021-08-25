@@ -12,10 +12,8 @@
 
 #import "HyBidMoPubHeaderBiddingBannerCustomEvent.h"
 #import "HyBidMoPubHeaderBiddingInterstitialCustomEvent.h"
-#import "HyBidMoPubHeaderBiddingInterstitialVideoCustomEvent.h"
 #import "HyBidMoPubHeaderBiddingLeaderboardCustomEvent.h"
 #import "HyBidMoPubHeaderBiddingMRectCustomEvent.h"
-#import "HyBidMoPubHeaderBiddingMRectVideoCustomEvent.h"
 #import "HyBidMoPubHeaderBiddingRewardedCustomEvent.h"
 #import "HyBidAdapterConfiguration.h"
 #import "HyBidMoPubUtils.h"

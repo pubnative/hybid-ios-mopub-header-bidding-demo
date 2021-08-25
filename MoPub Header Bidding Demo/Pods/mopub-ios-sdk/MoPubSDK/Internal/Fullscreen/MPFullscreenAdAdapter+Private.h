@@ -13,7 +13,6 @@
 #import "MPAdDestinationDisplayAgent.h"
 #import "MPAdTargeting.h"
 #import "MPAnalyticsTracker.h"
-#import "MPCountdownTimerDelegate.h"
 #import "MPDiskLRUCache.h"
 #import "MPFullscreenAdAdapter.h"
 #import "MPFullscreenAdAdapterDelegate.h"
@@ -133,11 +132,15 @@ NS_ASSUME_NONNULL_BEGIN
                                               containedInContainerView:(MPAdContainerView *)container
                                                        adConfiguration:(MPAdConfiguration *)adConfiguration;
 
+/// Returns the cached `MPCreativeExperienceSettings` for the `adUnitId`, or default values if no
+/// settings are cached.
+- (MPCreativeExperienceSettings *)creativeExperienceSettings;
+
 @end
 
 #pragma mark -
 
-@interface MPFullscreenAdAdapter (MPCountdownTimerDelegate) <MPCountdownTimerDelegate>
+@interface MPFullscreenAdAdapter (MPAdContainerViewDelegate) <MPAdContainerViewDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

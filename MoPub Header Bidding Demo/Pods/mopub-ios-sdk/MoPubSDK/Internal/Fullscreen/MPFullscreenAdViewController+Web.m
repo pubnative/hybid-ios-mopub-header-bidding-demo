@@ -33,7 +33,8 @@
 
     self.adContainerView = [[MPAdContainerView alloc] initWithFrame:self.view.bounds webContentView:webView];
     self.adContainerView.webAdDelegate = self;
-    self.adContainerView.countdownTimerDelegate = self;
+    self.adContainerView.delegate = self;
+    self.adContainerView.creativeExperienceSettings = self.creativeExperienceSettings;
     [self.view addSubview:self.adContainerView];
 
     self.adContainerView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -81,7 +82,7 @@
     [self.webViewAgent didAppear];
 
     // Resume timer (if it exists) upon resuming ad
-    [self resumeTimer];
+    [self endInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (void)fullscreenWebAdDidAppear {
@@ -92,7 +93,7 @@
     [self.webViewAgent disableRequestHandling];
 
     // Pause timer (if it exists) upon ad clickthrough
-    [self pauseTimer];
+    [self startInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (void)fullscreenWebAdDidDisappear {

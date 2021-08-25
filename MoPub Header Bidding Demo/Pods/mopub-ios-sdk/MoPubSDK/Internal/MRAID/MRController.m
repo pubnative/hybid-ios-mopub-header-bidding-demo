@@ -11,9 +11,11 @@
 // since MoPubSDK-Swift.h will not import it.
 #if __has_include(<MoPubSDK/MoPubSDK-Swift.h>)
     #import <UIKit/UIKit.h>
+    #import <WebKit/WebKit.h>
     #import <MoPubSDK/MoPubSDK-Swift.h>
 #else
     #import <UIKit/UIKit.h>
+    #import <WebKit/WebKit.h>
     #import "MoPubSDK-Swift.h"
 #endif
 #import "MoPub.h"
@@ -21,6 +23,7 @@
 #import "MRBridge.h"
 #import "MRCommand.h"
 #import "MPCoreInstanceProvider.h"
+#import "MPCoreInstanceProvider+MRAID.h"
 #import "MRExpandModalViewController.h"
 #import "MPForceableOrientationProtocol.h"
 #import "MPGlobal.h"
@@ -90,11 +93,10 @@ static NSString *const kMRAIDCommandResize = @"resize";
 // Safe area insets
 @property (nonatomic, assign) BOOL includeSafeAreaInsetsInCalculations;
 
-// MRAID capability feature flags
-@property (nonatomic, assign) BOOL allowCustomClose;
-
 // Hold onto SKAdNetwork clickthrough data
 @property (nonatomic, strong) MPSKAdNetworkData *skAdNetworkData;
+
+@property (nonatomic, assign) BOOL hideOverlay;
 
 @end
 
@@ -103,6 +105,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
 - (instancetype)initWithAdViewFrame:(CGRect)adViewFrame
               supportedOrientations:(MPInterstitialOrientationType)orientationType
                     adPlacementType:(MRAdViewPlacementType)placementType
+                        hideOverlay:(BOOL)hideOverlay
                            delegate:(id<MRControllerDelegate>)delegate
 {
     if (self = [super init]) {
@@ -114,6 +117,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
         _didConfigureOrientationNotificationObservers = NO;
         _currentAdSize = CGSizeZero;
         _isAppSuspended = NO;
+        _hideOverlay = hideOverlay;
 
         _mraidDefaultAdFrame = adViewFrame;
 
@@ -143,7 +147,6 @@ static NSString *const kMRAIDCommandResize = @"resize";
         _previousDefaultPosition = CGRectNull;
         _previousScreenSize = CGSizeZero;
         _previousMaxSize = CGSizeZero;
-        _allowCustomClose = NO;
     }
 
     return self;
@@ -171,11 +174,6 @@ static NSString *const kMRAIDCommandResize = @"resize";
     self.isAdVastVideoPlayer = configuration.isVastVideoPlayer;
 
     self.skAdNetworkData = configuration.skAdNetworkData;
-
-    // Rewarded ads always allowed to use custom close since it utilizes JS
-    // and MRAID to render the locked countdown experience and then show the close button.
-    self.allowCustomClose = (configuration.mraidAllowCustomClose
-                             || configuration.isRewarded);
 
     NSArray<WKUserScript *> *scripts = configuration.viewabilityContext.resourcesAsScripts;
     [self commonSetupBeforeMRAIDBridgeLoadAdWithWebViewScripts:scripts];
@@ -288,7 +286,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
 {
     self.isAdLoading = NO;
     // No matter what, show the close button on the expanded view.
-    self.expansionContentView.closeButtonType = MPAdViewCloseButtonTypeImageButton;
+    [self.expansionContentView showCloseButton];
     [self.mraidBridge fireErrorEventForAction:kMRAIDCommandExpand withMessage:@"Could not load URL."];
 }
 
@@ -345,7 +343,28 @@ static NSString *const kMRAIDCommandResize = @"resize";
 
 - (MPWebView *)buildMRAIDWebViewWithFrame:(CGRect)frame scripts:(NSArray<WKUserScript *> *)scripts
 {
-    MPWebView *webView = [[MPWebView alloc] initWithFrame:frame scripts:scripts];
+    // Check that mraid.js is available
+    if (!MPCoreInstanceProvider.sharedProvider.isMraidJavascriptAvailable) {
+        // Fail the web view creation if mraid.js isn't available.
+        return nil;
+    }
+
+    // Create mraid.js `WKUserScript` if needed. Initialize once and store for the app lifetime.
+    static WKUserScript *mraidJSUserScript = nil;
+    static dispatch_once_t initOnceToken;
+    dispatch_once(&initOnceToken, ^{
+        mraidJSUserScript = [[WKUserScript alloc] initWithSource:MPCoreInstanceProvider.sharedProvider.mraidJavascript
+                                                   injectionTime:WKUserScriptInjectionTimeAtDocumentStart
+                                                forMainFrameOnly:YES];
+    });
+
+    // Append mraid.js to web view scripts array
+    NSArray *baseArray = scripts != nil ? scripts : @[];
+    NSMutableArray *webViewScripts = [NSMutableArray arrayWithArray:baseArray];
+    [webViewScripts addObject:mraidJSUserScript];
+
+    // Create web view with scripts
+    MPWebView *webView = [[MPWebView alloc] initWithFrame:frame scripts:webViewScripts];
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     webView.backgroundColor = [UIColor clearColor];
     webView.clipsToBounds = YES;
@@ -360,22 +379,32 @@ static NSString *const kMRAIDCommandResize = @"resize";
  */
 - (void)commonSetupBeforeMRAIDBridgeLoadAdWithWebViewScripts:(NSArray<WKUserScript *> *)scripts {
     self.mraidWebView = [self buildMRAIDWebViewWithFrame:self.mraidDefaultAdFrame scripts:scripts];
+    if (self.mraidWebView == nil) {
+        // In the case that mraid.js isn't available, the mraid web view may not be built.
+        // Fail the ad load if this is the case.
+        [self adDidFailToLoad];
+        return;
+    }
     self.mraidWebView.shouldConformToSafeArea = [self isInterstitialAd];
 
     self.mraidBridge = [[MRBridge alloc] initWithWebView:self.mraidWebView delegate:self];
     self.mraidAdView = [[MPAdContainerView alloc] initWithFrame:self.mraidDefaultAdFrame
                                                  webContentView:self.mraidWebView];
     self.mraidAdView.webAdDelegate = self;
-    self.mraidAdView.countdownTimerDelegate = self.countdownTimerDelegate;
+    self.mraidAdView.delegate = self.containerDelegate;
     if (self.placementType == MRAdViewPlacementTypeInterstitial) {
         self.mraidAdView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
 
+    if (self.hideOverlay) {
+        [self.mraidAdView hideOverlay];
+    }
+
     // Initially turn off the close button for default banner MRAID ads while defaulting to turning it on for interstitials.
     if (self.placementType == MRAdViewPlacementTypeInline) {
-        self.mraidAdView.closeButtonType = MPAdViewCloseButtonTypeNone;
+        [self.mraidAdView hideControls];
     } else if (self.placementType == MRAdViewPlacementTypeInterstitial) {
-        self.mraidAdView.closeButtonType = MPAdViewCloseButtonTypeImageButton;
+        [self.mraidAdView showCloseButton];
     }
 }
 
@@ -492,42 +521,6 @@ static NSString *const kMRAIDCommandResize = @"resize";
     }
 }
 
-/**
- Check whether the frame of Close button is valid.
- @param closeButtonLocation The Close button location.
- @param adFrame The ad frame that contains the Close button.
- @param applicationSafeArea The safe area of this application.
- @return @c YES if the frame of the Close button is valid, and @c NO otherwise.
- */
-+ (BOOL)isValidCloseButtonPlacement:(MPAdViewCloseButtonLocation)closeButtonLocation
-                          inAdFrame:(CGRect)adFrame
-              inApplicationSafeArea:(CGRect)applicationSafeArea {
-    // Need to convert the corrdinate system of the Close button frame from "in the ad" to "in the window".
-    CGRect closeButtonFrameInAd = [MPAdContainerView closeButtonFrameForAdSize:adFrame.size
-                                                                    atLocation:closeButtonLocation];
-    CGRect closeButtonFrameInWindow = CGRectOffset(closeButtonFrameInAd, CGRectGetMinX(adFrame), CGRectGetMinY(adFrame));
-    return CGRectContainsRect(applicationSafeArea, closeButtonFrameInWindow);
-}
-
-- (MPAdViewCloseButtonLocation)adCloseButtonLocationFromString:(NSString *)closeButtonLocationString
-{
-    if ([closeButtonLocationString isEqualToString:@"top-left"]) {
-        return MPAdViewCloseButtonLocationTopLeft;
-    } else if ([closeButtonLocationString isEqualToString:@"top-center"]) {
-        return MPAdViewCloseButtonLocationTopCenter;
-    } else if ([closeButtonLocationString isEqualToString:@"bottom-left"]) {
-        return MPAdViewCloseButtonLocationBottomLeft;
-    } else if ([closeButtonLocationString isEqualToString:@"bottom-center"]) {
-        return MPAdViewCloseButtonLocationBottomCenter;
-    } else if ([closeButtonLocationString isEqualToString:@"bottom-right"]) {
-        return MPAdViewCloseButtonLocationBottomRight;
-    } else if ([closeButtonLocationString isEqualToString:@"center"]) {
-        return MPAdViewCloseButtonLocationCenter;
-    } else {
-        return MPAdViewCloseButtonLocationTopRight;
-    }
-}
-
 - (void)animateViewFromDefaultStateToResizedState:(MPAdContainerView *)view withFrame:(CGRect)newFrame
 {
     [self willBeginAnimatingAdSize];
@@ -615,7 +608,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
 
 - (void)closeFromExpandedState
 {
-    self.mraidAdView.closeButtonType = MPAdViewCloseButtonTypeNone;
+    [self.mraidAdView hideControls];
 
     // Immediately re-parent the ad so it will show up as the expand modal goes away rather than after.
     [self.originalSuperview addSubview:self.mraidAdView];
@@ -658,7 +651,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
 
 - (void)closeFromResizedState
 {
-    self.mraidAdView.closeButtonType = MPAdViewCloseButtonTypeNone;
+    [self.mraidAdView hideControls];
 
     [self willBeginAnimatingAdSize];
 
@@ -773,7 +766,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
         [self adDidFailToLoad];
     } else if (bridge == self.mraidBridgeTwoPart) {
         // Always show the close button when the two-part expand fails.
-        self.expansionContentView.closeButtonType = MPAdViewCloseButtonTypeImageButton;
+        [self.expansionContentView showCloseButton];
 
         // For two-part expands, we don't want to tell the delegate anything went wrong since the ad did successfully load.
         // We will fire an error to the javascript though.
@@ -809,41 +802,6 @@ static NSString *const kMRAIDCommandResize = @"resize";
         if ([self.delegate respondsToSelector:@selector(mraidAdDidReceiveClickthrough:)]) {
             [self.delegate mraidAdDidReceiveClickthrough:URL];
         }
-    }
-}
-
-- (void)bridge:(MRBridge *)bridge handleNativeCommandUseCustomClose:(BOOL)useCustomClose
-{
-    // `useCustomClose()` has not been allowed for this ad.
-    if (!self.allowCustomClose) {
-        MPLogInfo(@"MRAID command `useCustomClose()` is not allowed.");
-        return;
-    }
-
-    // Calling useCustomClose() for banners won't take effect until expand() is called so we don't need to take
-    // any action here as useCustomClose will be given to us when expand is called. Interstitials can have their
-    // close buttons changed at any time though.
-    if (self.placementType != MRAdViewPlacementTypeInterstitial) {
-        return;
-    }
-
-    [self configureCloseButtonForView:self.mraidAdView forUseCustomClose:useCustomClose];
-}
-
-- (void)configureCloseButtonForView:(MPAdContainerView *)view forUseCustomClose:(BOOL)useCustomClose
-{
-    if (useCustomClose) {
-        // When using custom close, we must leave a tappable region on the screen and just hide the image
-        // unless the ad is a vast video ad. For vast video, we expect that the creative will have a tappable
-        // close region.
-        if (self.isAdVastVideoPlayer) {
-            view.closeButtonType = MPAdViewCloseButtonTypeNone;
-        } else {
-            view.closeButtonType = MPAdViewCloseButtonTypeInvisibleButton;
-        }
-    } else {
-        // When not using custom close, show our own image with a tappable region.
-        view.closeButtonType = MPAdViewCloseButtonTypeImageButton;
     }
 }
 
@@ -913,7 +871,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
     }
 }
 
-- (void)bridge:(MRBridge *)bridge handleNativeCommandExpandWithURL:(NSURL *)url useCustomClose:(BOOL)useCustomClose
+- (void)bridge:(MRBridge *)bridge handleNativeCommandExpandWithURL:(NSURL *)url
 {
     if (self.placementType != MRAdViewPlacementTypeInline) {
         [bridge fireErrorEventForAction:kMRAIDCommandExpand withMessage:@"Cannot expand from interstitial ads."];
@@ -961,7 +919,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
         }];
     }
 
-    [self configureCloseButtonForView:self.expansionContentView forUseCustomClose:(useCustomClose && self.allowCustomClose)];
+    [self.expansionContentView showCloseButton];
 }
 
 - (void)bridge:(MRBridge *)bridge handleNativeCommandResizeWithParameters:(NSDictionary *)parameters
@@ -983,14 +941,12 @@ static NSString *const kMRAIDCommandResize = @"resize";
     CGFloat offsetX = [[parameters objectForKey:@"offsetX"] floatValue];
     CGFloat offsetY = [[parameters objectForKey:@"offsetY"] floatValue];
     BOOL allowOffscreen = [parameters objectForKey:@"allowOffscreen"] ? [[parameters objectForKey:@"allowOffscreen"] boolValue] : YES;
-    NSString *customClosePositionString = [[parameters objectForKey:@"customClosePosition"] length] ? [parameters objectForKey:@"customClosePosition"] : @"top-right";
 
     //save default frame of the ad view
     if (self.currentState == MRAdViewStateDefault) {
         self.mraidDefaultAdFrameInKeyWindow = [self.mraidAdView.superview convertRect:self.mraidAdView.frame toView:MPKeyWindow().rootViewController.view];
     }
 
-    MPAdViewCloseButtonLocation closeButtonLocation = [self adCloseButtonLocationFromString:customClosePositionString];
     CGRect applicationSafeArea = MPApplicationFrame(self.includeSafeAreaInsetsInCalculations);
     CGRect newFrame = CGRectMake(CGRectGetMinX(applicationSafeArea) + offsetX,
                                  CGRectGetMinY(applicationSafeArea) + offsetY,
@@ -1004,14 +960,9 @@ static NSString *const kMRAIDCommandResize = @"resize";
                     inApplicationSafeArea:applicationSafeArea
                            allowOffscreen:allowOffscreen]) {
         [self.mraidBridge fireErrorEventForAction:kMRAIDCommandResize withMessage:@"Could not display desired frame in compliance with MRAID 2.0 specifications."];
-    } else if (![[self class] isValidCloseButtonPlacement:closeButtonLocation
-                                                inAdFrame:newFrame
-                                    inApplicationSafeArea:applicationSafeArea]) {
-        [self.mraidBridge fireErrorEventForAction:kMRAIDCommandResize withMessage:@"Custom close event region locates in invalid area."];
     } else {
         // Update the close button
-        self.mraidAdView.closeButtonType = MPAdViewCloseButtonTypeInvisibleButton;
-        self.mraidAdView.closeButtonLocation = closeButtonLocation;
+        [self.mraidAdView showCloseButton];
 
         // If current state is default, save our current frame as the default frame, set originalSuperview, setup resizeBackgroundView,
         // move mraidAdView to rootViewController's view, and call adWillPresentModalView

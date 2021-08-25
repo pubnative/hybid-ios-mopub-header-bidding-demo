@@ -13,7 +13,7 @@ class Interstitial: UIViewController {
     var moPubInterstitial = MPInterstitialAdController()
 // Step 7: Create a HyBidInterstitialAdRequest property
     var interstitialAdRequest =  HyBidInterstitialAdRequest()
-    let adUnitID = "a91bc5a72fd54888ac248e7656b69b2e"
+    let adUnitID = "e00185ccb4344c2792b991f7d33e2fd9"
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -13,7 +13,7 @@ class MRect: UIViewController {
     var moPubMRect : MPAdView!
 // Step 8: Create a HyBidAdRequest property
     var mRectAdRequest =  HyBidAdRequest()
-    let adUnitID = "7f797ff5c287480cbf15e9f1735fb8d7"
+    let adUnitID = "f2acf01fca1b4221b41c601abd49e7b2"
 
     override func viewDidLoad() {
         super.viewDidLoad()

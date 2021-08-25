@@ -33,8 +33,9 @@
     imageCreativeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
     self.adContainerView = [[MPAdContainerView alloc] initWithFrame:self.view.bounds imageCreativeView:imageCreativeView];
-    self.adContainerView.countdownTimerDelegate = self;
+    self.adContainerView.delegate = self;
     self.adContainerView.webAdDelegate = self; // Needed for close button to function
+    self.adContainerView.creativeExperienceSettings = self.creativeExperienceSettings;
 }
 
 @end

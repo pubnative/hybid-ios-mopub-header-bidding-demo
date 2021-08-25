@@ -52,7 +52,7 @@ extern NSString * const kRewardedVideoCurrencyNameMetadataKey;
 extern NSString * const kRewardedVideoCurrencyAmountMetadataKey;
 extern NSString * const kRewardedVideoCompletionUrlMetadataKey;
 extern NSString * const kRewardedCurrenciesMetadataKey;
-extern NSString * const kRewardedDurationMetadataKey;
+extern NSString * const kRewardedMetadataKey;
 extern NSString * const kRewardedPlayableRewardOnClickMetadataKey;
 extern NSString * const kImpressionDataMetadataKey;
 extern NSString * const kVASTVideoTrackersMetadataKey;
@@ -112,7 +112,7 @@ extern NSString * const kBannerImpressionMinPixelMetadataKey;
 @property (nonatomic, readonly) NSArray<MPReward *> *availableRewards;
 @property (nonatomic, strong) MPReward *selectedReward;
 @property (nonatomic, strong) NSArray<NSString *> *rewardedVideoCompletionUrls;
-@property (nonatomic, assign) NSTimeInterval rewardedDuration;
+@property (nonatomic, assign) BOOL isRewarded;
 @property (nonatomic, copy) NSString *advancedBidPayload;
 @property (nonatomic, strong) MPImpressionData *impressionData;
 @property (nonatomic, strong) MPSKAdNetworkData *skAdNetworkData;
@@ -122,25 +122,15 @@ extern NSString * const kBannerImpressionMinPixelMetadataKey;
 @property (nonatomic, strong, readonly) MPViewabilityContext *viewabilityContext;
 
 /**
- MRAID `useCustomClose()` functionality is available for use.
- */
-@property (nonatomic, readonly) BOOL mraidAllowCustomClose;
-
-/**
  Unified ad unit format in its raw string representation.
  */
 @property (nonatomic, copy) NSString *format;
-
-/**
- The ad is capable of rewarding users.
- */
-@property (nonatomic, readonly) BOOL isRewarded;
 
 // viewable impression tracking
 @property (nonatomic) NSTimeInterval impressionMinVisibleTimeInSec;
 @property (nonatomic) CGFloat impressionMinVisiblePixels;
 
-- (instancetype)initWithMetadata:(NSDictionary *)metadata data:(NSData *)data isFullscreenAd:(BOOL)isFullscreenAd;
+- (instancetype)initWithMetadata:(NSDictionary *)metadata data:(NSData *)data isFullscreenAd:(BOOL)isFullscreenAd isRewarded:(BOOL)isRewarded;
 
 // Default @c init is unavailable
 - (instancetype)init NS_UNAVAILABLE;

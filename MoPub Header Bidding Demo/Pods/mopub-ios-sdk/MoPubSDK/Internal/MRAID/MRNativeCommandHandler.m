@@ -62,11 +62,6 @@
 
 #pragma mark - MRCommandDelegate
 
-- (void)mrCommand:(MRCommand *)command shouldUseCustomClose:(BOOL)useCustomClose
-{
-    [self.delegate handleMRAIDUseCustomClose:useCustomClose];
-}
-
 - (void)mrCommand:(MRCommand *)command setOrientationPropertiesWithForceOrientation:(UIInterfaceOrientationMask)forceOrientation
 {
     [self.delegate handleMRAIDSetOrientationPropertiesWithForceOrientationMask:forceOrientation];

@@ -35,9 +35,8 @@
     return self;
 }
 
-- (void)setRewardCountdownDuration:(NSTimeInterval)rewardCountdownDuration {
-    _rewardCountdownDuration = rewardCountdownDuration; // store locally in case of `adContainerView` hasn't been created
-    self.adContainerView.skipOffset = rewardCountdownDuration;
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)presentFromViewController:(UIViewController *)viewController complete:(void(^)(NSError * _Nullable))complete {
@@ -46,12 +45,6 @@
             complete(NSError.fullscreenAdAlreadyOnScreen);
         }
         return;
-    }
-
-    // Rewarded content should not initially show the close button since
-    // the countdown timer will be shown.
-    if (self.rewardCountdownDuration > 0) {
-        [self.adContainerView setCloseButtonType:MPAdViewCloseButtonTypeNone];
     }
 
     // Notify any listeners that presentation of the view controller
@@ -75,9 +68,7 @@
             case MPAdContentTypeWebNoMRAID:
             case MPAdContentTypeWebWithMRAID:
                 // intentional `switch` fallthrough for web and image ads
-                if (strongSelf.rewardCountdownDuration > 0) {
-                    [strongSelf.adContainerView showCountdownTimer:strongSelf.rewardCountdownDuration];
-                }
+                [strongSelf.adContainerView startAdExperience];
                 break;
         }
 
@@ -99,7 +90,12 @@
 }
 
 - (void)showCloseButton {
-    [self.adContainerView setCloseButtonType:MPAdViewCloseButtonTypeImageButton];
+    [self.adContainerView showCloseButton];
+}
+
+- (void)setCreativeExperienceSettings:(MPCreativeExperienceSettings *)creativeExperienceSettings {
+    _creativeExperienceSettings = creativeExperienceSettings;
+    self.adContainerView.creativeExperienceSettings = creativeExperienceSettings;
 }
 
 #pragma mark - Override
@@ -208,6 +204,19 @@
             self.view.backgroundColor = [UIColor blackColor];
             break;
     }
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appWillEnterForeground:)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
 }
 
 #pragma mark - View Life Cycle Events
@@ -390,22 +399,57 @@
 
 #pragma mark - Timer methods
 
-- (void)pauseTimer {
-    [self.adContainerView pauseCountdownTimer];
+- (void)pause {
+    [self.adContainerView pauseVideo];
 }
 
-- (void)resumeTimer {
-    [self.adContainerView resumeCountdownTimer];
+- (void)resume {
+    [self.adContainerView resume];
+}
+
+#pragma mark - Interruptions
+
+- (void)startInterruption:(MPFullscreenAdInterruption)interruption {
+    // Only pause when there are currently no interruptions.
+    if (self.interruptions == MPFullscreenAdInterruptionNone) {
+        [self pause];
+    }
+
+    self.interruptions |= interruption;
+}
+
+- (void)endInterruption:(MPFullscreenAdInterruption)interruption {
+    // Immediately return if this interruption was not previously pushed.
+    if (!(self.interruptions & interruption)) {
+        return;
+    }
+
+    self.interruptions &= ~interruption;
+
+    // Resume when there are no interruptions left.
+    if (self.interruptions == MPFullscreenAdInterruptionNone) {
+        [self resume];
+    }
+}
+
+#pragma mark - Notifications
+
+- (void)appDidEnterBackground:(NSNotification *)notification {
+    [self startInterruption:MPFullscreenAdInterruptionBackground];
+}
+
+- (void)appWillEnterForeground:(NSNotification *)notification {
+    [self endInterruption:MPFullscreenAdInterruptionBackground];
 }
 
 @end
 
 #pragma mark -
 
-@implementation MPFullscreenAdViewController (MPCountdownTimerDelegate)
+@implementation MPFullscreenAdViewController (MPAdContainerViewDelegate)
 
-- (void)countdownTimerDidFinishCountdown:(id)source {
-    [self.countdownTimerDelegate countdownTimerDidFinishCountdown:self];
+- (void)containerViewAdExperienceDidFinish:(MPAdContainerView *)containerView {
+    [self.containerDelegate containerViewAdExperienceDidFinish:containerView];
 }
 
 @end

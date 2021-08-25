@@ -43,63 +43,64 @@ static NSString * const kPrecisionOptionUndisclosedKey      = @"undisclosed";
  */
 
 - (NSString *)impressionID {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataImpressionIDKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataImpressionIDKey asClass:[NSString class]];
 }
 
 - (NSString *)adUnitID {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitIDKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitIDKey asClass:[NSString class]];
 }
 
 - (NSString *)adUnitName {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitNameKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitNameKey asClass:[NSString class]];
 }
 
 - (NSString *)adUnitFormat {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitFormatKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdUnitFormatKey asClass:[NSString class]];
 }
 
 - (NSString *)adGroupID {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupIDKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupIDKey asClass:[NSString class]];
 }
 
 - (NSString *)adGroupName {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupNameKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupNameKey asClass:[NSString class]];
 }
 
 - (NSString *)adGroupType {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupTypeKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupTypeKey asClass:[NSString class]];
 }
 
 - (NSNumber *)adGroupPriority {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupPriorityKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAdGroupPriorityKey asClass:[NSNumber class]];
 }
 
 - (NSString *)currency {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataCurrencyKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataCurrencyKey asClass:[NSString class]];
 }
 
 - (NSString *)country {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataCountryKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataCountryKey asClass:[NSString class]];
 }
 
 - (NSString *)networkName {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataNetworkNameKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataNetworkNameKey asClass:[NSString class]];
 }
 
 - (NSString *)networkPlacementID {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataNetworkPlacementIDKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataNetworkPlacementIDKey asClass:[NSString class]];
 }
 
 - (NSString *)appVersion {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataAppVersionKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataAppVersionKey asClass:[NSString class]];
 }
 
 - (NSNumber *)publisherRevenue {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataPublisherRevenueKey];
+    id object = [self nullableImpressionDataObjectForKey:kImpressionDataPublisherRevenueKey asClass:[NSNumber class]];
+    return object;
 }
 
 - (NSDictionary<NSString *, NSString *> *)demandPartnerData {
-    return [self nullableImpressionDataObjectForKey:kImpressionDataDemandPartnerDataKey];
+    return [self nullableImpressionDataObjectForKey:kImpressionDataDemandPartnerDataKey asClass:[NSDictionary class]];
 }
 
 - (MPImpressionDataPrecision)precision {
@@ -111,7 +112,7 @@ static NSString * const kPrecisionOptionUndisclosedKey      = @"undisclosed";
     // If not, set it
     self.isPrecisionSet = YES;
 
-    NSString * precisionString = [self nullableImpressionDataObjectForKey:kImpressionDataPrecisionKey];
+    NSString * precisionString = [self nullableImpressionDataObjectForKey:kImpressionDataPrecisionKey asClass:[NSString class]];
 
     // If the precision string is nil, the precision is unknown, and no other checks are required.
     if (precisionString == nil) {
@@ -135,12 +136,12 @@ static NSString * const kPrecisionOptionUndisclosedKey      = @"undisclosed";
     return _precision;
 }
 
-// This method gets the object for the @c key given from @c impressionDataDictionary. If the object is of type @c NSNull, this method returns @c nil.
-// This way, getters will return @c nil for null JSON values. This method does not mutate the dictionary to remove @c NSNull objects.
-- (id)nullableImpressionDataObjectForKey:(id)key {
+// This method gets the object for the @c key given from @c impressionDataDictionary, and checks the class for the object. If the object's class is invalid, this method returns @c nil.
+// This way, getters will return @c nil for objects of incorrect classes. This method does not mutate the dictionary to remove @c NSNull objects.
+- (id)nullableImpressionDataObjectForKey:(NSString *)key asClass:(Class)class {
     id object = self.impressionDataDictionary[key];
 
-    if ([object isKindOfClass:[NSNull class]]) {
+    if (![object isKindOfClass:class]) {
         return nil;
     }
 

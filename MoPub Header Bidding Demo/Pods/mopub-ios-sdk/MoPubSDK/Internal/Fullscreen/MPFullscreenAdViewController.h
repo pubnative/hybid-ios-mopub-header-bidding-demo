@@ -8,9 +8,35 @@
 
 #import <UIKit/UIKit.h>
 #import "MPAdViewConstant.h"
-#import "MPCountdownTimerDelegate.h"
 #import "MPGlobal.h"
 #import "MPFullscreenAdViewControllerDelegate.h"
+#import "MPAdContainerView.h"
+
+@class MPCreativeExperienceSettings;
+
+typedef NS_OPTIONS(NSUInteger, MPFullscreenAdInterruption) {
+    /*
+     No interruption.
+     */
+    MPFullscreenAdInterruptionNone          = 0,
+
+    /*
+     The ad was interrupted due to the user clicking through.
+     */
+    MPFullscreenAdInterruptionClickthrough  = 1 << 0,
+
+    /*
+     The ad was interrupted due to the user backgrounding the application.
+     */
+    MPFullscreenAdInterruptionBackground    = 1 << 1,
+
+    /*
+     The ad was interrupted due to the audio session being interrupted,
+     for example by background audio or a phone call. This only applies
+     in the case of VAST ads.
+     */
+    MPFullscreenAdInterruptionAudio         = 1 << 2
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,9 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPFullscreenAdViewController : UIViewController <MPFullscreenAdViewController>
 
-@property (nonatomic, assign) NSTimeInterval rewardCountdownDuration; // store locally in case of the view does not exist yet
 @property (nonatomic, weak) id<MPFullscreenAdViewControllerAppearanceDelegate> appearanceDelegate;
-@property (nonatomic, weak) id<MPCountdownTimerDelegate> countdownTimerDelegate;
+@property (nonatomic, weak) id<MPAdContainerViewDelegate> containerDelegate;
+@property (nonatomic, strong) MPCreativeExperienceSettings *creativeExperienceSettings;
 
 - (instancetype)initWithAdContentType:(MPAdContentType)adContentType;
 
@@ -41,21 +67,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showCloseButton;
 
-/**
- Pauses the reward timer.
+/*
+ Call when an interruption begins.
  */
-- (void)pauseTimer;
+- (void)startInterruption:(MPFullscreenAdInterruption)interruption;
 
-/**
- Resumes the reward timer.
+/*
+ Call when an interruption ends.
  */
-- (void)resumeTimer;
+- (void)endInterruption:(MPFullscreenAdInterruption)interruption;
 
 @end
 
 #pragma mark -
 
-@interface MPFullscreenAdViewController (MPCountdownTimerDelegate) <MPCountdownTimerDelegate>
+@interface MPFullscreenAdViewController (MPAdContainerViewDelegate) <MPAdContainerViewDelegate>
 @end
 
 NS_ASSUME_NONNULL_END

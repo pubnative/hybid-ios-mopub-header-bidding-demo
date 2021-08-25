@@ -1,33 +1,33 @@
 PODS:
-  - HyBid (2.5.3):
-    - HyBid/Banner (= 2.5.3)
-    - HyBid/Core (= 2.5.3)
-    - HyBid/FullScreen (= 2.5.3)
-    - HyBid/Native (= 2.5.3)
-    - HyBid/RewardedVideo (= 2.5.3)
-  - HyBid/Banner (2.5.3):
+  - HyBid (2.6.0):
+    - HyBid/Banner (= 2.6.0)
+    - HyBid/Core (= 2.6.0)
+    - HyBid/FullScreen (= 2.6.0)
+    - HyBid/Native (= 2.6.0)
+    - HyBid/RewardedVideo (= 2.6.0)
+  - HyBid/Banner (2.6.0):
     - HyBid/Core
-  - HyBid/Core (2.5.3)
-  - HyBid/FullScreen (2.5.3):
+  - HyBid/Core (2.6.0)
+  - HyBid/FullScreen (2.6.0):
     - HyBid/Core
-  - HyBid/Native (2.5.3):
+  - HyBid/Native (2.6.0):
     - HyBid/Core
-  - HyBid/RewardedVideo (2.5.3):
+  - HyBid/RewardedVideo (2.6.0):
     - HyBid/Core
-  - MoPub-HyBid-Adapters (2.5.3.0):
-    - HyBid (= 2.5.3)
-    - mopub-ios-sdk (~> 5.17.0)
-  - mopub-ios-sdk (5.17.0):
-    - mopub-ios-sdk/MoPubSDK (= 5.17.0)
-  - mopub-ios-sdk/Core (5.17.0)
-  - mopub-ios-sdk/MoPubSDK (5.17.0):
+  - MoPub-HyBid-Adapters (2.6.0.0):
+    - HyBid (= 2.6.0)
+    - mopub-ios-sdk (~> 5.18.0)
+  - mopub-ios-sdk (5.18.0):
+    - mopub-ios-sdk/MoPubSDK (= 5.18.0)
+  - mopub-ios-sdk/Core (5.18.0)
+  - mopub-ios-sdk/MoPubSDK (5.18.0):
     - mopub-ios-sdk/Core
     - mopub-ios-sdk/NativeAds
-  - mopub-ios-sdk/NativeAds (5.17.0):
+  - mopub-ios-sdk/NativeAds (5.18.0):
     - mopub-ios-sdk/Core
 
 DEPENDENCIES:
-  - MoPub-HyBid-Adapters (= 2.5.3.0)
+  - MoPub-HyBid-Adapters (= 2.6.0.0)
 
 SPEC REPOS:
   trunk:
@@ -36,10 +36,10 @@ SPEC REPOS:
     - mopub-ios-sdk
 
 SPEC CHECKSUMS:
-  HyBid: 0c699367667239c15c6555cc3015944c5796c5e7
-  MoPub-HyBid-Adapters: 665136d6c974f49d8534bcc0d0bfe12f47bdbb62
-  mopub-ios-sdk: 36d322902674b79b0560a1cb8d15af0548d364ea
+  HyBid: 0446b760c16f534a1536163907bb2ddd15a6f152
+  MoPub-HyBid-Adapters: 2a77e01c0e00039706ee8224b31f963216fbd141
+  mopub-ios-sdk: d7b533646d96a075e578e8af9598794f2dfb7f7b
 
-PODFILE CHECKSUM: d4c2bfdb74b8a74e07077863ccb4ac6d85366017
+PODFILE CHECKSUM: 4e10a666f51aeabc2079e02d14858d656dc5ffee
 
 COCOAPODS: 1.10.1

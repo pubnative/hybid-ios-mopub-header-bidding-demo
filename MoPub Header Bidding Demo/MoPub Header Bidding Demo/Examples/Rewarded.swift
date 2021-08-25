@@ -11,7 +11,7 @@ class Rewarded: UIViewController {
 
 // Step 3: Create a HyBidRewardedAdRequest property
     var rewardedAdRequest =  HyBidRewardedAdRequest()
-    let adUnitID = "0d6a3e5d883540ad98f1baf5d2a5d710"
+    let adUnitID = "d705528794274d088f5d510efe32b282"
 
     override func viewDidLoad() {
         super.viewDidLoad()

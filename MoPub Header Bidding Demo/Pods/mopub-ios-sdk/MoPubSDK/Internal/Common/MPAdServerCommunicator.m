@@ -28,6 +28,7 @@
 #import "MPRateLimitManager.h"
 #import "MPSKAdNetworkManager.h"
 #import "MPURLRequest.h"
+#import "NSDictionary+MPAdditions.h"
 
 // Multiple response JSON fields
 static NSString * const kAdResponsesKey = @"ad-responses";
@@ -237,6 +238,8 @@ static NSString * const kAdResonsesContentKey = @"content";
         return;
     }
 
+    BOOL isRewarded = [json mp_boolForKey:kRewardedMetadataKey defaultValue:NO];
+
     // Attempt to parse each ad response JSON into its corresponding MPAdConfiguration object.
     NSMutableArray<MPAdConfiguration *> * configurations = [NSMutableArray arrayWithCapacity:responses.count];
     for (NSDictionary * responseJson in responses) {
@@ -249,7 +252,7 @@ static NSString * const kAdResonsesContentKey = @"content";
             continue;
         }
 
-        MPAdConfiguration * configuration = [[MPAdConfiguration alloc] initWithMetadata:metadata data:content isFullscreenAd:self.delegate.isFullscreenAd];
+        MPAdConfiguration * configuration = [[MPAdConfiguration alloc] initWithMetadata:metadata data:content isFullscreenAd:self.delegate.isFullscreenAd isRewarded:isRewarded];
         if (configuration != nil) {
             [configurations addObject:configuration];
         } else {
@@ -273,6 +276,12 @@ static NSString * const kAdResonsesContentKey = @"content";
                 MPLogError(@"SKAdNetwork sync failed with error: %@", error);
             }
         }];
+    }
+
+    NSDictionary *creativeExperiencesDict = json[kCreativeExperiencesSettingsKey];
+    MPCreativeExperienceSettings *settings = [MPCreativeExperienceSettings decodeFrom:creativeExperiencesDict isRewarded:isRewarded];
+    if (settings != nil) {
+        [MPCreativeExperiencesManager.shared cacheWithSettings:settings for:self.delegate.adUnitId];
     }
 
     self.loading = NO;

@@ -19,7 +19,6 @@
         [self registerCommand:[MRCloseCommand self]];
         [self registerCommand:[MRExpandCommand self]];
         [self registerCommand:[MRResizeCommand self]];
-        [self registerCommand:[MRUseCustomCloseCommand self]];
         [self registerCommand:[MRSetOrientationPropertiesCommand self]];
         [self registerCommand:[MROpenCommand self]];
     }
@@ -156,7 +155,6 @@
 
     NSDictionary *expandParams = [NSDictionary dictionaryWithObjectsAndKeys:
                                   (url == nil) ? [NSNull null] : url , @"url",
-                                  [NSNumber numberWithBool:[self boolFromParameters:params forKey:@"shouldUseCustomClose"]], @"useCustomClose",
                                   nil];
 
     [self.delegate mrCommand:self expandWithParams:expandParams];
@@ -177,36 +175,6 @@
 - (BOOL)executeWithParams:(NSDictionary *)params
 {
     [self.delegate mrCommand:self resizeWithParams:params];
-
-    return YES;
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-@implementation MRUseCustomCloseCommand
-
-// We allow useCustomClose to run while we're blocking requests because it only controls how we present a UIButton.
-// It can't present/dismiss any view or view controllers. It also doesn't affect any mraid ad/screen metrics.
-- (BOOL)executableWhileBlockingRequests
-{
-    return YES;
-}
-
-- (BOOL)requiresUserInteractionForPlacementType:(NSUInteger)placementType
-{
-    return NO;
-}
-
-+ (NSString *)commandType
-{
-    return @"usecustomclose";
-}
-
-- (BOOL)executeWithParams:(NSDictionary *)params
-{
-    [self.delegate mrCommand:self shouldUseCustomClose:[self boolFromParameters:params forKey:@"shouldUseCustomClose"]];
 
     return YES;
 }

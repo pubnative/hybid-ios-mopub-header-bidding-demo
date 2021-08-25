@@ -98,7 +98,7 @@ NSString * const kRewardedVideoCompletionUrlMetadataKey = @"x-rewarded-video-com
 NSString * const kRewardedCurrenciesMetadataKey = @"x-rewarded-currencies";
 
 // rewarded playables
-NSString * const kRewardedDurationMetadataKey = @"x-rewarded-duration";
+NSString * const kRewardedMetadataKey = @"rewarded";
 NSString * const kRewardedPlayableRewardOnClickMetadataKey = @"x-should-reward-on-click";
 
 // vast video trackers
@@ -118,9 +118,6 @@ NSString * const kViewabilityVerificationResourcesKey = @"viewability-verificati
 
 // advanced bidding
 NSString * const kAdvancedBiddingMarkupMetadataKey = @"adm";
-
-// MRAID
-NSString * const kMRAIDAllowCustomCloseKey = @"allow-custom-close";
 
 /**
  Format Unification Phase 2 item 1.1 - clickability experiment
@@ -149,13 +146,14 @@ NSString * const kVASTClickabilityExperimentKey = @"vast-click-enabled";
 
 @implementation MPAdConfiguration
 
-- (instancetype)initWithMetadata:(NSDictionary *)metadata data:(NSData *)data isFullscreenAd:(BOOL)isFullscreenAd
+- (instancetype)initWithMetadata:(NSDictionary *)metadata data:(NSData *)data isFullscreenAd:(BOOL)isFullscreenAd isRewarded:(BOOL)isRewarded
 {
     self = [super init];
     if (self) {
         [self commonInitWithMetadata:metadata
                                 data:data
                       isFullscreenAd:isFullscreenAd
+                          isRewarded:isRewarded
                   experimentProvider:MOPUBExperimentProvider.sharedInstance];
     }
     return self;
@@ -167,6 +165,7 @@ NSString * const kVASTClickabilityExperimentKey = @"vast-click-enabled";
 - (void)commonInitWithMetadata:(NSDictionary *)metadata
                           data:(NSData *)data
                 isFullscreenAd:(BOOL)isFullscreenAd
+                    isRewarded:(BOOL)isRewarded
             experimentProvider:(MOPUBExperimentProvider *)experimentProvider
 {
     self.adResponseData = data;
@@ -278,7 +277,7 @@ NSString * const kVASTClickabilityExperimentKey = @"vast-click-enabled";
     self.rewardedVideoCompletionUrls = [self URLStringsFromMetadata:metadata forKey:kRewardedVideoCompletionUrlMetadataKey];
 
     // rewarded playables
-    self.rewardedDuration = [self timeIntervalFromMetadata:metadata forKey:kRewardedDurationMetadataKey];
+    self.isRewarded = isRewarded;
 
     // clickthrough experiment
     self.clickthroughExperimentBrowserAgent = [self clickthroughExperimentVariantFromMetadata:metadata forKey:kClickthroughExperimentBrowserAgent];
@@ -295,9 +294,6 @@ NSString * const kVASTClickabilityExperimentKey = @"vast-click-enabled";
 
     // advanced bidding
     self.advancedBidPayload = [metadata objectForKey:kAdvancedBiddingMarkupMetadataKey];
-
-    // MRAID
-    _mraidAllowCustomClose = [metadata mp_boolForKey:kMRAIDAllowCustomCloseKey defaultValue:NO];
 }
 
 /**
@@ -453,11 +449,6 @@ NSString * const kVASTClickabilityExperimentKey = @"vast-click-enabled";
 - (BOOL)isMraidAd
 {
     return [self.metadataAdType isEqualToString:kAdTypeMraid];
-}
-
-- (BOOL)isRewarded
-{
-    return self.rewardedDuration > 0;
 }
 
 #pragma mark - Private

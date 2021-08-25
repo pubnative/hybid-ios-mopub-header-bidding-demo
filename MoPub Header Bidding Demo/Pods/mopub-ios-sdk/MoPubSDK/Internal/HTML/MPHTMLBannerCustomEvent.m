@@ -60,7 +60,7 @@
 - (void)adSessionStarted:(MPWebView *)webView {
     // Create the ad container that will house the web view.
     self.adContainer = [[MPAdContainerView alloc] initWithFrame:webView.frame webContentView:webView];
-    [self.adContainer setCloseButtonType:MPAdViewCloseButtonTypeNone];
+    [self.adContainer hideControls];
 
     [self inlineAd:self webSessionWillStartInView:self.adContainer];
 }

@@ -32,7 +32,6 @@
  */
 @protocol MRNativeCommandHandlerDelegate <NSObject>
 
-- (void)handleMRAIDUseCustomClose:(BOOL)useCustomClose;
 - (void)handleMRAIDSetOrientationPropertiesWithForceOrientationMask:(UIInterfaceOrientationMask)forceOrientationMask;
 - (void)handleMRAIDExpandWithParameters:(NSDictionary *)params;
 - (void)handleMRAIDResizeWithParameters:(NSDictionary *)params;

@@ -26,11 +26,12 @@
 @interface MRController : NSObject
 @property (nonatomic, readonly) MPAdContainerView *mraidAdView;
 @property (nonatomic, weak) id<MRControllerDelegate> delegate;
-@property (nonatomic, weak) id<MPCountdownTimerDelegate> countdownTimerDelegate;
+@property (nonatomic, weak) id<MPAdContainerViewDelegate> containerDelegate;
 
 - (instancetype)initWithAdViewFrame:(CGRect)adViewFrame
               supportedOrientations:(MPInterstitialOrientationType)orientationType
                     adPlacementType:(MRAdViewPlacementType)placementType
+                        hideOverlay:(BOOL)hideOverlay
                            delegate:(id<MRControllerDelegate>)delegate;
 
 /**

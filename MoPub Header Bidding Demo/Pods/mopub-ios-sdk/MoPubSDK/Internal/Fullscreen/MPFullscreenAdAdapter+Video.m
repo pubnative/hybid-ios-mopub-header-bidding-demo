@@ -18,9 +18,6 @@
 #import "MPVASTMacroProcessor.h"
 #import "MPVASTManager.h"
 
-@interface MPFullscreenAdAdapter (MPVideoPlayerDelegate) <MPVideoPlayerDelegate>
-@end
-
 #pragma mark -
 
 @implementation MPFullscreenAdAdapter (Video)
@@ -84,23 +81,8 @@
                                                                               videoConfig:videoConfig];
             self.viewController.appearanceDelegate = self;
             self.viewController.videoPlayerDelegate = self;
-            self.viewController.countdownTimerDelegate = self;
-            if (self.isRewardExpected) {
-                [self.viewController setRewardCountdownDuration:self.rewardCountdownDuration];
-            }
-
-            // Initialize the Viewability tracker now there is a view hierarchy
-            // for it to track, and the video is about to load.
-            // The Viewability session is okay to start immediately since there is
-            // no web view involved.
-            self.viewabilityTracker = [self viewabilityTrackerForVideoConfig:self.videoConfig
-                                                    containedInContainerView:self.viewController.adContainerView
-                                                             adConfiguration:self.configuration];
-            [self.viewabilityTracker startTracking];
-
-            // Now that the viewability tracker is ready, set the weak reference to it
-            // in the `VASTTracking` object, so it can track the VAST media events.
-            self.vastTracking.viewabilityTracker = self.viewabilityTracker;
+            self.viewController.containerDelegate = self;
+            self.viewController.creativeExperienceSettings = [self creativeExperienceSettings];
 
             [self.viewController loadVideo];
         };
@@ -131,8 +113,7 @@
 @implementation MPFullscreenAdAdapter (MPAdDestinationDisplayAgentDelegate)
 
 - (void)displayAgentDidDismissModal {
-    [self.viewController enableAppLifeCycleEventObservationForAutoPlayPause];
-    [self.viewController playVideo]; // continue playing after click-through
+    [self.viewController endInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (void)displayAgentWillLeaveApplication {
@@ -140,7 +121,7 @@
 }
 
 - (void)displayAgentWillPresentModal {
-    [self.viewController pauseVideo];
+    [self.viewController startInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (UIViewController *)viewControllerForPresentingModalView {
@@ -159,6 +140,24 @@
 
 - (void)videoPlayerDidLoadVideo:(id<MPVideoPlayer>)videoPlayer {
     self.hasAdAvailable = YES;
+
+    // Defer initializing the viewability tracker until the video loaded,
+    // as the video duration is required to initialize the tracker.
+    if (self.viewabilityTracker == nil) {
+        // Initialize the Viewability tracker now there is a view hierarchy
+        // for it to track, and the video is about to load.
+        // The Viewability session is okay to start immediately since there is
+        // no web view involved.
+        self.viewabilityTracker = [self viewabilityTrackerForVideoConfig:self.videoConfig
+                                                containedInContainerView:self.viewController.adContainerView
+                                                         adConfiguration:self.configuration];
+        [self.viewabilityTracker startTracking];
+
+        // Now that the viewability tracker is ready, set the weak reference to it
+        // in the `VASTTracking` object, so it can track the VAST media events.
+        self.vastTracking.viewabilityTracker = self.viewabilityTracker;
+    }
+
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
@@ -213,22 +212,9 @@ videoDidReachProgressTime:(NSTimeInterval)videoProgress
         // Forward the event to the VAST tracker
         [self.vastTracking handleVideoEvent:MPVideoEventResume videoTimeOffset:videoProgress];
     } else if ([event isEqualToString:MPVideoEventSkip]) {
-        // Skipping the video should stop playback.
-        // This is required since the Viewability tracker may hold onto the `videoPlayer`
-        // reference after the fullscreen has dismissed (causing the audio playback of the
-        // video player to continue).
-        [videoPlayer stopVideo];
-
         // Typically the creative only has one of the "close" tracker and the "closeLinear"
         // tracker. If it has both trackers, we send both as it asks for.
         [self.vastTracking handleVideoEvent:MPVideoEventSkip videoTimeOffset:videoProgress];
-
-        // Do not close the ad if it has an end card, instead we will skip to the end card.
-        if (!self.videoConfig.hasCompanionAd) {
-            [self.vastTracking handleVideoEvent:MPVideoEventClose videoTimeOffset:videoProgress];
-            [self.vastTracking handleVideoEvent:MPVideoEventCloseLinear videoTimeOffset:videoProgress];
-            [self dismissPlayerViewController];
-        }
     }
 }
 
@@ -249,7 +235,6 @@ overridingClickThroughURL:(NSURL * _Nullable)url {
         [self.adDestinationDisplayAgent displayDestinationForURL:iconView.icon.clickThroughURL skAdNetworkData:nil];
     }
 
-    [self.viewController disableAppLifeCycleEventObservationForAutoPlayPause];
     [self.vastTracking uniquelySendURLs:iconView.icon.clickTrackingURLs];
 
     // ad level click tracking
@@ -292,8 +277,6 @@ overridingClickThroughURL:(NSURL * _Nullable)url {
     // Begin navigating to the clickthrough destination.
     [self.adDestinationDisplayAgent displayDestinationForURL:clickthroughDestinationUrl skAdNetworkData:self.configuration.skAdNetworkData];
 
-    [self.viewController disableAppLifeCycleEventObservationForAutoPlayPause];
-
     // Aggregate trackers with additional trackers
     NSMutableSet<NSURL *> *urls = [NSMutableSet set];
     if (companionAdView.ad.clickTrackingURLs != nil) {
@@ -322,6 +305,14 @@ didFailToLoadCompanionAdView:(MPVASTCompanionAdView *)companionAdView {
 - (void)videoPlayer:(id<MPVideoPlayer>)videoPlayer
 companionAdViewRequestDismiss:(MPVASTCompanionAdView *)companionAdView {
     [self dismissPlayerViewController];
+}
+
+- (void)videoPlayerAudioInterruptionDidBegin:(nonnull id<MPVideoPlayer>)videoPlayer {
+    [self.viewController startInterruption:MPFullscreenAdInterruptionAudio];
+}
+
+- (void)videoPlayerAudioInterruptionDidEnd:(nonnull id<MPVideoPlayer>)videoPlayer {
+    [self.viewController endInterruption:MPFullscreenAdInterruptionAudio];
 }
 
 @end

@@ -16,13 +16,21 @@ import Foundation
 public final class Stopwatch: NSObject {
 
     private var timer: ResumableTimer?
+    
     /// Duration of stopwatch in seconds.
-    private var duration: TimeInterval = 0.0
+    @objc public private(set) var duration: TimeInterval = 0.0
 
     /// Flag indicating that the stopwatch is currently running and tracking foreground duration.
     @objc
     public var isRunning: Bool {
-        return timer != nil
+        guard let timer = timer else {
+            return false
+        }
+        
+        switch timer.state {
+        case .active: return true
+        default: return false
+        }
     }
 
     // MARK: - Initialization
@@ -45,9 +53,21 @@ public final class Stopwatch: NSObject {
         // Start the countup timer.
         timer?.scheduleNow();
     }
+    
+    /// Pause the timer.
+    @objc
+    public func pause() {
+        timer?.pause()
+    }
+    
+    /// Resume the timer.
+    @objc
+    public func resume() {
+        timer?.scheduleNow()
+    }
 
     /// Stop the stopwatch and return duration in seconds.
-    @objc
+    @objc @discardableResult
     public func stop() -> TimeInterval {
         // Stopwatch not running; return 0.
         if timer == nil {

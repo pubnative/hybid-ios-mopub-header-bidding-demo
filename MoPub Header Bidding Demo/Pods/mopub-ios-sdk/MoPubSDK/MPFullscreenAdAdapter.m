@@ -335,6 +335,18 @@ static const NSUInteger kExcessiveCustomDataLength = 8196;
     return tracker;
 }
 
+#pragma mark - Helpers
+
+- (MPCreativeExperienceSettings *)creativeExperienceSettings {
+    MPCreativeExperienceSettings *settings = [MPCreativeExperiencesManager.shared cachedSettingsFor:self.adUnitId];
+
+    if (settings == nil) {
+        settings = ([self isRewardExpected] ? MPCreativeExperienceSettings.defaultValueRewarded : MPCreativeExperienceSettings.defaultValue);
+    }
+
+    return settings;
+}
+
 @end
 
 #pragma mark -
@@ -370,26 +382,18 @@ static const NSUInteger kExcessiveCustomDataLength = 8196;
             self.viewController = [[MPFullscreenAdViewController alloc] initWithAdContentType:self.adContentType];
             self.viewController.appearanceDelegate = self;
             self.viewController.webAdDelegate = self;
-            self.viewController.countdownTimerDelegate = self;
+            self.viewController.containerDelegate = self;
             self.viewController.orientationType = configuration.orientationType; // not a concern for MRAID ads
+            self.viewController.creativeExperienceSettings = [self creativeExperienceSettings];
             [self.viewController loadConfigurationForWebAd:configuration];
-            if (self.isRewardExpected) {
-                [self.viewController setRewardCountdownDuration:self.rewardCountdownDuration];
-            }
             break;
         case MPAdContentTypeWebWithMRAID:
             self.viewController = [[MPFullscreenAdViewController alloc] initWithAdContentType:self.adContentType];
             self.viewController.appearanceDelegate = self;
             self.viewController.webAdDelegate = self;
-            self.viewController.countdownTimerDelegate = self;
+            self.viewController.containerDelegate = self;
+            self.viewController.creativeExperienceSettings = [self creativeExperienceSettings];
             [self.viewController loadConfigurationForMRAIDAd:configuration];
-
-            // Determine whether to display the countdown timer. In general, the timer will be displayed
-            // if there is a rewarded duration.
-            if (self.isRewardExpected) {
-                // Render the countdown timer.
-                [self.viewController setRewardCountdownDuration:self.rewardCountdownDuration];
-            }
             break;
     }
 }
@@ -451,9 +455,9 @@ static const NSUInteger kExcessiveCustomDataLength = 8196;
 
 #pragma mark -
 
-@implementation MPFullscreenAdAdapter (MPCountdownTimerDelegate)
+@implementation MPFullscreenAdAdapter (MPAdContainerViewDelegate)
 
-- (void)countdownTimerDidFinishCountdown:(id)source {
+- (void)containerViewAdExperienceDidFinish:(MPAdContainerView *)containerView {
     [self provideRewardToUser:self.configuration.selectedReward
    forRewardCountdownComplete:YES
               forUserInteract:NO];

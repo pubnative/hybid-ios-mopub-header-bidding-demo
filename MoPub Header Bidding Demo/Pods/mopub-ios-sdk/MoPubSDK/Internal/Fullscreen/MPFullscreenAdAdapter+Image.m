@@ -77,16 +77,11 @@
     self.viewController = [[MPFullscreenAdViewController alloc] initWithAdContentType:MPAdContentTypeImage];
     [self.viewController prepareImageAdWithImageCreativeView:self.imageCreativeView];
     self.viewController.appearanceDelegate = self;
-    self.viewController.countdownTimerDelegate = self;
+    self.viewController.containerDelegate = self;
+    self.viewController.creativeExperienceSettings = [self creativeExperienceSettings];
 
-    if (self.isRewardExpected) {
-        // If a reward is expected, set up the view controller with the countdown duration
-        [self.viewController setRewardCountdownDuration:self.rewardCountdownDuration];
-    }
-    else {
-        // If a reward is not expected, enable click immediately on the image creative view
-        [self.imageCreativeView enableClick];
-    }
+    // Clicks on images are always enabled immediately.
+    [self.imageCreativeView enableClick];
 
     self.hasAdAvailable = YES;
     [self.delegate fullscreenAdAdapterDidLoadAd:self];

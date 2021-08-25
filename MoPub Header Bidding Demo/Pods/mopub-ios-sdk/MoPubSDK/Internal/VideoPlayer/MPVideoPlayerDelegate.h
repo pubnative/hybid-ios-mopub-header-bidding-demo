@@ -59,6 +59,12 @@ didFailToLoadCompanionAdView:(MPVASTCompanionAdView *)companionAdView;
 - (void)videoPlayer:(id<MPVideoPlayer>)videoPlayer
 companionAdViewRequestDismiss:(MPVASTCompanionAdView *)companionAdView;
 
+#pragma mark - Interruptions
+
+- (void)videoPlayerAudioInterruptionDidBegin:(id<MPVideoPlayer>)videoPlayer;
+
+- (void)videoPlayerAudioInterruptionDidEnd:(id<MPVideoPlayer>)videoPlayer;
+
 @end
 
 NS_ASSUME_NONNULL_END

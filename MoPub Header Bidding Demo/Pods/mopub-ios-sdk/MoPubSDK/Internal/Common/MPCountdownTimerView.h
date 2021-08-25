@@ -13,12 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  A view that will display a countdown timer and invoke a completion block once the timer has elapsed.
- After the countdown starts, the countdown is paused automatically when the app becomes inactive,
- and the countdown resumes when the app becomes active again (by listening to @c UIApplicationWillResignActiveNotification
- and @c UIApplicationDidBecomeActiveNotification notifications). This view has an intrinsic size, so
- do not add width and height constaints to it. This is a square view.
+ This view has an intrinsic size, so do not add width and height constaints to it. This is a square view.
  */
 @interface MPCountdownTimerView : UIView
+
+/**
+ True if the countdown timer is active, or false if it's not.
+ */
+@property (nonatomic, assign, readonly) BOOL isCountdownActive;
 
 /**
  Initializes a countdown timer view. The timer is not automatically started.

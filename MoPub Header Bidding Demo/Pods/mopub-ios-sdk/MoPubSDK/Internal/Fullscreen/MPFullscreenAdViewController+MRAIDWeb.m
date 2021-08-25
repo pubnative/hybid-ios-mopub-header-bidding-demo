@@ -28,8 +28,9 @@
     self.mraidController = [[MRController alloc] initWithAdViewFrame:frame
                                                supportedOrientations:configuration.orientationType
                                                      adPlacementType:MRAdViewPlacementTypeInterstitial
+                                                         hideOverlay:NO
                                                             delegate:self];
-    self.mraidController.countdownTimerDelegate = self;
+    self.mraidController.containerDelegate = self;
 
     self.orientationType = [configuration orientationType];
     [self.mraidController loadAdWithConfiguration:configuration];
@@ -37,6 +38,11 @@
 
 - (void)willPresentFullscreenMRAIDWebAd {
     [self.mraidController handleMRAIDInterstitialWillPresentWithViewController:self];
+
+    // Even though the container/overlay hide controls by default,
+    // MRController shows the close button by default, so we will hide
+    // it here.
+    [self.adContainerView hideControls];
 }
 
 - (void)didPresentFullscreenMRAIDWebAd {
@@ -62,7 +68,7 @@
     [self.mraidController enableRequestHandling];
 
     // Resume reward timer
-    [self resumeTimer];
+    [self endInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (void)fullscreenMRAIDWebAdDidAppear {
@@ -73,7 +79,7 @@
     [self.mraidController disableRequestHandling];
 
     // pause reward timer upon click
-    [self pauseTimer];
+    [self startInterruption:MPFullscreenAdInterruptionClickthrough];
 }
 
 - (void)fullscreenMRAIDWebAdDidDisappear {
@@ -120,6 +126,7 @@
     [self.view addSubview:adView];
     self.adContainerView = adView;
     self.adContainerView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.adContainerView.creativeExperienceSettings = self.creativeExperienceSettings;
     [NSLayoutConstraint activateConstraints:
      @[[self.adContainerView.mp_safeTopAnchor constraintEqualToAnchor:self.view.mp_safeTopAnchor],
        [self.adContainerView.mp_safeLeadingAnchor constraintEqualToAnchor:self.view.mp_safeLeadingAnchor],

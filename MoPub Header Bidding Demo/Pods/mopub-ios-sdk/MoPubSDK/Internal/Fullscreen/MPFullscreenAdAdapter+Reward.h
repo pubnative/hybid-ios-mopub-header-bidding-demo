@@ -13,11 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MPFullscreenAdAdapter (Reward)
 
 /**
- For rewarded ads, this is the countdown duration before the Skip or Close button is shown.
- */
-- (NSTimeInterval)rewardCountdownDuration;
-
-/**
  Reward the user at most once after the reward countdown duration.
 
  Note: This method is the centralized location for reward validation business logic. All code paths

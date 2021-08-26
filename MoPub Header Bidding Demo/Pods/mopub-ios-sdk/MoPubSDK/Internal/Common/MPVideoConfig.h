@@ -52,12 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) NSArray<MPVASTMediaFile *> *mediaFiles;
 
 /**
- The minimum amount of time (in seconds) that needs to elapse before the VAST video can be skipped by
- the user. If no skip offset is specified, the VAST video is immediately skippable.
- */
-@property (nonatomic, nullable, readonly) MPVASTDurationOffset *skipOffset;
-
-/**
  Viewability context to use with this video asset.
  */
 @property (nonatomic, nullable, readonly) MPViewabilityContext *viewabilityContext;

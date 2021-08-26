@@ -13,7 +13,6 @@
 
 @protocol MRCommandDelegate <NSObject>
 
-- (void)mrCommand:(MRCommand *)command shouldUseCustomClose:(BOOL)useCustomClose;
 - (void)mrCommand:(MRCommand *)command setOrientationPropertiesWithForceOrientation:(UIInterfaceOrientationMask)forceOrientation;
 - (void)mrCommand:(MRCommand *)command openURL:(NSURL *)url;
 - (void)mrCommand:(MRCommand *)command expandWithParams:(NSDictionary *)params;
@@ -56,12 +55,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface MRResizeCommand : MRCommand
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-@interface MRUseCustomCloseCommand : MRCommand
 
 @end
 

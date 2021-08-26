@@ -8,7 +8,6 @@
 
 #import "MRBridge.h"
 #import "MPConstants.h"
-#import "MPCoreInstanceProvider+MRAID.h"
 #import "MPError.h"
 #import "MPLogging.h"
 #import "NSURL+MPAdditions.h"
@@ -51,37 +50,19 @@ static NSString * const kTelURLScheme   = @"tel";
 
 - (void)loadHTMLString:(NSString *)HTML baseURL:(NSURL *)baseURL
 {
-    // Bail out if we can't locate mraid.js.
-    if (![[MPCoreInstanceProvider sharedProvider] isMraidJavascriptAvailable]) {
-        NSError *error = [NSError errorWithDomain:MoPubMRAIDAdsSDKDomain code:MRErrorMRAIDJSNotFound userInfo:nil];
-        [self.delegate bridge:self didFailLoadingWebView:self.webView error:error];
-        return;
-    }
-
-    // No URL
-    if (HTML == nil) {
+    // Check that the HTML is available before proceeding
+    if (HTML.length == 0) {
         NSError *error = [NSError errorWithDomain:kNSErrorDomain code:MOPUBErrorNoHTMLToLoad userInfo:nil];
         [self.delegate bridge:self didFailLoadingWebView:self.webView error:error];
         return;
     }
 
-    // Execute the javascript in the web view directly.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.webView evaluateJavaScript:[[MPCoreInstanceProvider sharedProvider] mraidJavascript] completionHandler:^(id result, NSError *error){
-            [self.webView loadHTMLString:HTML baseURL:baseURL];
-        }];
-    });
+    // Load the HTML
+    [self.webView loadHTMLString:HTML baseURL:baseURL];
 }
 
 - (void)loadHTMLUrl:(NSURL *)url {
-    // Bail out if we can't locate mraid.js.
-    if (![[MPCoreInstanceProvider sharedProvider] isMraidJavascriptAvailable]) {
-        NSError *error = [NSError errorWithDomain:MoPubMRAIDAdsSDKDomain code:MRErrorMRAIDJSNotFound userInfo:nil];
-        [self.delegate bridge:self didFailLoadingWebView:self.webView error:error];
-        return;
-    }
-
-    // No URL
+    // Check that the URL is available before proceeding
     if (url == nil) {
         NSError *error = [NSError errorWithDomain:kNSErrorDomain code:MOPUBErrorNoHTMLUrlToLoad userInfo:nil];
         [self.delegate bridge:self didFailLoadingWebView:self.webView error:error];
@@ -89,12 +70,8 @@ static NSString * const kTelURLScheme   = @"tel";
     }
 
     // Execute the javascript in the web view directly.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.webView evaluateJavaScript:[[MPCoreInstanceProvider sharedProvider] mraidJavascript] completionHandler:^(id result, NSError *error){
-            NSURLRequest *request = [NSURLRequest requestWithURL:url];
-            [self.webView loadRequest:request];
-        }];
-    });
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [self.webView loadRequest:request];
 }
 
 - (void)fireReadyEvent
@@ -261,11 +238,6 @@ static NSString * const kTelURLScheme   = @"tel";
 
 #pragma mark - MRNativeCommandHandlerDelegate
 
-- (void)handleMRAIDUseCustomClose:(BOOL)useCustomClose
-{
-    [self.delegate bridge:self handleNativeCommandUseCustomClose:useCustomClose];
-}
-
 - (void)handleMRAIDSetOrientationPropertiesWithForceOrientationMask:(UIInterfaceOrientationMask)forceOrientationMask
 {
     [self.delegate bridge:self handleNativeCommandSetOrientationPropertiesWithForceOrientationMask:forceOrientationMask];
@@ -289,8 +261,7 @@ static NSString * const kTelURLScheme   = @"tel";
 - (void)handleMRAIDExpandWithParameters:(NSDictionary *)params
 {
     id urlValue = [params objectForKey:@"url"];
-    [self.delegate bridge:self handleNativeCommandExpandWithURL:(urlValue == [NSNull null]) ? nil : urlValue
-           useCustomClose:[[params objectForKey:@"useCustomClose"] boolValue]];
+    [self.delegate bridge:self handleNativeCommandExpandWithURL:(urlValue == [NSNull null]) ? nil : urlValue];
 }
 
 - (void)handleMRAIDResizeWithParameters:(NSDictionary *)params

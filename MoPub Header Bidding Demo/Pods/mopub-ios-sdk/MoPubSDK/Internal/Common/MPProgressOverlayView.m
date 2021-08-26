@@ -142,6 +142,16 @@
 #pragma mark - Public Methods
 
 - (void)show {
+    // This should only be run on the main thread.
+    if (NSThread.isMainThread == NO) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __typeof__(self) strongSelf = weakSelf;
+            [strongSelf show];
+        });
+        return;
+    }
+
     // Add self to the key window
     UIWindow * keyWindow = MPKeyWindow();
     [keyWindow addSubview:self];
@@ -164,6 +174,16 @@
 }
 
 - (void)hide {
+    // This should only be run on the main thread.
+    if (NSThread.isMainThread == NO) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __typeof__(self) strongSelf = weakSelf;
+            [strongSelf hide];
+        });
+        return;
+    }
+
     // Cancel any pending enabling of the close button
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(enableCloseButton) object:nil];
 

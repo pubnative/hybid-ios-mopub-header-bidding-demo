@@ -22,6 +22,10 @@ NSString * const kSDKEngineVersionKey                 = @"e_ver";
 NSString * const kOSKey                               = @"os";
 NSString * const kAdUnitKey                           = @"adunit";
 NSString * const kDeviceNameKey                       = @"dn";
+NSString * const kDeviceMakeKey                       = @"make";
+NSString * const kDeviceModelKey                      = @"model";
+NSString * const kOSVKey                              = @"osv";
+NSString * const kHWVKey                              = @"hwv";
 NSString * const kLocationAuthorizationStatusKey      = @"las";
 NSString * const kIdentifierForAdvertiserKey          = @"ifa";
 NSString * const kIdentifierForVendorKey              = @"ifv";
@@ -137,3 +141,7 @@ NSString * const kSKAdNetworkLastSyncTimestampKey     = @"skadn_last_send_ts";
 NSString * const kSKAdNetworkLastSyncAppVersionKey    = @"skadn_last_send_av";
 NSString * const kSKAdNetworkHashKey                  = @"skadn_hash";
 NSString * const kSKAdNetworkSupportedNetworksKey     = @"supported_skadnetworks";
+
+#pragma mark - Creative Experiences Keys
+NSString * const kCreativeExperiencesLastSyncHashKey  = @"ce_settings_hash_key";
+NSString * const kCreativeExperiencesSettingsKey      = @"creative_experience_settings";

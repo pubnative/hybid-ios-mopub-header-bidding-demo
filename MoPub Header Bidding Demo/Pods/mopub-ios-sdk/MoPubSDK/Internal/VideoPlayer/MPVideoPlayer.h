@@ -51,18 +51,6 @@ typedef NS_ENUM(NSInteger, MPVideoPlayerEvent) {
  */
 - (void)stopVideo;
 
-/**
- Enable app life cycle event observation for auto-play and auto-pause.
- Note: This should be called when the video is visible (for example, not blocked by click-through web view).
- */
-- (void)enableAppLifeCycleEventObservationForAutoPlayPause;
-
-/**
- Disable app life cycle event observation for auto-play and auto-pause.
- Note: This should be called when the video is invisible (for example, blocked by click-through web view).
- */
-- (void)disableAppLifeCycleEventObservationForAutoPlayPause;
-
 @end
 
 NS_ASSUME_NONNULL_END

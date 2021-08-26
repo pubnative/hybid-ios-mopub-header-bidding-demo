@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "MPAdViewConstant.h"
-#import "MPCountdownTimerDelegate.h"
 #import "MPVideoPlayer.h"
 #import "MPVideoPlayerDelegate.h"
 #import "MPVideoPlayerView.h"
@@ -18,8 +17,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class MPImageCreativeView;
+@class MPCreativeExperienceSettings;
 
-@protocol MPAdContainerViewWebAdDelegate;
+@protocol MPAdContainerViewWebAdDelegate, MPAdContainerViewDelegate;
 
 /**
  This is the unified ad container view for all inline and fullscreen ad formats. Ad content view is
@@ -29,11 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MPAdContainerView : MPViewableView
 
-@property (nonatomic, assign) NSTimeInterval skipOffset;
 @property (nonatomic, readonly) BOOL wasTapped;
 @property (nonatomic, weak) id<MPAdContainerViewWebAdDelegate> webAdDelegate; // only for web ads
 @property (nonatomic, weak) id<MPVideoPlayerDelegate> videoPlayerDelegate; // only for video ads
-@property (nonatomic, weak) id<MPCountdownTimerDelegate> countdownTimerDelegate;
+@property (nonatomic, weak) id<MPAdContainerViewDelegate> delegate; // For all ad types
+@property (nonatomic, strong) MPCreativeExperienceSettings *creativeExperienceSettings;
 
 /**
  Initializes @c MPAdContainerView to a given frame with a given web content view.
@@ -52,39 +52,27 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame imageCreativeView:(MPImageCreativeView *)imageCreativeView;
 
 /**
- Provided the ad size and Close button location, returns the frame of the Close button.
- Note: The provided ad size is assumed to be at least 50x50 (@c kMPAdViewCloseButtonSize), otherwise
- the return value is undefined.
-
- @param adSize The size of the ad.
- @param location The location of the close button.
+ Hide all controls (e.g. close button, countdown timer, etc).
  */
-+ (CGRect)closeButtonFrameForAdSize:(CGSize)adSize atLocation:(MPAdViewCloseButtonLocation)location;
+- (void)hideControls;
 
 /**
- Set the Close button location with UI update.
+ Immediately show the close button.
  */
-- (void)setCloseButtonLocation:(MPAdViewCloseButtonLocation)closeButtonLocation;
+- (void)showCloseButton;
 
 /**
- Set the Close button location with UI update.
+ Call to start the ad experience. This should not be called in the case of VAST ads, as the ad experience
+ will begin automatically when @c playVideo is called.
  */
-- (void)setCloseButtonType:(MPAdViewCloseButtonType)closeButtonType;
+- (void)startAdExperience;
 
 /**
- Show the countdown timer.
+ Completely hide the overlay.
+ Note: This only exists as a fix for MRAID end cards, as MRAID end card content is contained within a
+ second container view that has its own overlay, which should not be shown.
  */
-- (void)showCountdownTimer:(NSTimeInterval)duration;
-
-/**
- Pauses the countdown timer.
- */
-- (void)pauseCountdownTimer;
-
-/**
- Resumes a paused countdown timer.
- */
-- (void)resumeCountdownTimer;
+- (void)hideOverlay;
 
 @end
 
@@ -92,6 +80,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPAdContainerView (MPVideoPlayer) <MPVideoPlayer>
 @property (nonatomic, readonly) MPVideoPlayerView *videoPlayerView;
+
+/**
+ Resumes the ad after an interruption.
+ Note: This differs from @c playVideo as @c playVideo is latched and cannot be used to resume
+ the video.
+ */
+- (void)resume;
+
 @end
 
 #pragma mark -
@@ -113,5 +109,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)adContainerView:(MPAdContainerView *)adContainerView didMoveToWindow:(UIWindow *)window;
 
 @end
+
+@protocol MPAdContainerViewDelegate <NSObject>
+
+/**
+ Called once an ad experience has finished and the close button is shown.
+ */
+- (void)containerViewAdExperienceDidFinish:(MPAdContainerView *)containerView;
+
+@end
+
 
 NS_ASSUME_NONNULL_END

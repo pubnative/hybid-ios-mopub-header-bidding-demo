@@ -13,7 +13,7 @@ class Banner: UIViewController {
     var moPubBanner : MPAdView!
 // Step 8: Create a HyBidAdRequest property
     var bannerAdRequest =  HyBidAdRequest()
-    let adUnitID = "a4eac931d95444f0a95adc77093a22ab"
+    let adUnitID = "938b7ad8c5f542db94b07acfcc4c9ed7"
 
     override func viewDidLoad() {
         super.viewDidLoad()

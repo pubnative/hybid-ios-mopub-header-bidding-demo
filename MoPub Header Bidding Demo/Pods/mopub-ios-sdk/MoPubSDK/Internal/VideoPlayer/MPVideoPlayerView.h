@@ -57,6 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) float videoVolume;
 
+/**
+ Skip to the end of the video. Does not trigger any callbacks.
+ */
+- (void)skipToEnd;
+
 @end
 
 #pragma mark - MPVideoPlayerViewDelegate
@@ -123,6 +128,12 @@ videoDidReachProgressTime:(NSTimeInterval)videoProgress
  @param videoPlayerView Video player view.
  */
 - (void)videoPlayerViewHideIndustryIcon:(MPVideoPlayerView *)videoPlayerView;
+
+#pragma mark - Interruptions
+
+- (void)videoPlayerViewAudioInterruptionDidBegin:(id<MPVideoPlayer>)videoPlayer;
+
+- (void)videoPlayerViewAudioInterruptionDidEnd:(id<MPVideoPlayer>)videoPlayer;
 
 @end
 

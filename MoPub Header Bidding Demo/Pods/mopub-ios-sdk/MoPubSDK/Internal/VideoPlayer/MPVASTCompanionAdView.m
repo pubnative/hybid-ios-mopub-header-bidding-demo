@@ -118,6 +118,7 @@
     self.mraidController = [[MRController alloc] initWithAdViewFrame:self.ad.safeAdViewBounds
                                                supportedOrientations:MPInterstitialOrientationTypeAll // companion ad does not inherit `x-orientation` from the main ad
                                                      adPlacementType:MRAdViewPlacementTypeInterstitial
+                                                         hideOverlay:YES
                                                             delegate:self];
     self.mraidController.delegate = self;
     [self.mraidController disableClickthroughWebBrowser]; // let the companion ad view delegate handle click-through instead of the `MRController`

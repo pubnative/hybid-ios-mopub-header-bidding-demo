@@ -6,8 +6,13 @@
 	<string>AppLovinAdapterConfiguration</string>
 	<string>ChartboostAdapterConfiguration</string>
 	<string>FacebookAdapterConfiguration</string>
+	<string>FyberAdapterConfiguration</string>
 	<string>GoogleAdMobAdapterConfiguration</string>
+	<string>InMobiAdapterConfiguration</string>
 	<string>IronSourceAdapterConfiguration</string>
+	<string>OguryAdapterConfiguration</string>
+	<string>MintegralAdapterConfiguration</string>
+	<string>ReferenceAdapterConfiguration</string>
 	<string>SnapAdAdapterConfiguration</string>
 	<string>TapjoyAdapterConfiguration</string>
 	<string>UnityAdsAdapterConfiguration</string>

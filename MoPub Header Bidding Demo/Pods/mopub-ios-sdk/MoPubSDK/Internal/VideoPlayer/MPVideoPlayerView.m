@@ -37,7 +37,6 @@ NSTimeInterval const kPlayTimeTolerance = 0.1;
 @property (nonatomic, assign) BOOL isVideoLoaded; // set to YES after `loadVideo` is called for the first time; never set back to NO again
 @property (nonatomic, assign) BOOL isVideoPlaying; // set to YES after `play` is called for the first time; never set back to NO again
 @property (nonatomic, assign) BOOL didPlayToEndTime; // set to YES after the video ended
-@property (nonatomic, assign) BOOL isAutoPlayPauseEnabled;
 @property (nonatomic, assign) BOOL didFireStartEvent;
 @property (nonatomic, strong) MPViewableProgressView *progressBar;
 @property (nonatomic, strong) NSLayoutConstraint *progressBarTopConstraint;
@@ -137,7 +136,6 @@ NSTimeInterval const kPlayTimeTolerance = 0.1;
         [self observeBoundaryTimeForTracking];
         [self observeBoundaryTimeForIndustryIcons:self.videoConfig.industryIcons
                                     videoDuration:self.videoDuration];
-        [self enableAppLifeCycleEventObservationForAutoPlayPause];
     }
 
     [self.player play];
@@ -216,26 +214,9 @@ NSTimeInterval const kPlayTimeTolerance = 0.1;
     self.player = nil;
 }
 
-- (void)enableAppLifeCycleEventObservationForAutoPlayPause {
-    [self.notificationCenter addObserver:self
-                                selector:@selector(handleBackgroundNotification:)
-                                    name:UIApplicationDidEnterBackgroundNotification
-                                  object:nil];
-    [self.notificationCenter addObserver:self
-                                selector:@selector(handleForegroundNotification:)
-                                    name:UIApplicationWillEnterForegroundNotification
-                                  object:nil];
-    self.isAutoPlayPauseEnabled = YES;
-}
-
-- (void)disableAppLifeCycleEventObservationForAutoPlayPause {
-    [self.notificationCenter removeObserver:self
-                                       name:UIApplicationDidEnterBackgroundNotification
-                                     object:nil];
-    [self.notificationCenter removeObserver:self
-                                       name:UIApplicationWillEnterForegroundNotification
-                                     object:nil];
-    self.isAutoPlayPauseEnabled = NO;
+- (void)skipToEnd {
+    CMTime duration = self.player.currentItem.duration;
+    [self.player seekToTime:duration];
 }
 
 #pragma mark - Private Methods
@@ -476,13 +457,18 @@ NSTimeInterval const kPlayTimeTolerance = 0.1;
             return;
         }
 
+        // If the video is complete, an audio interruption won't pause the
+        // video, so there's no need to trigger the interruption callbacks.
+        if (strongSelf.didPlayToEndTime) {
+            return;
+        }
+
         NSNumber *interruptionType = [notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey];
-        if (strongSelf.isAutoPlayPauseEnabled
-            && strongSelf.didPlayToEndTime == NO
-            && interruptionType.unsignedIntegerValue == AVAudioSessionInterruptionTypeEnded) {
-            // After an interruption (such as a phone call), we don't want the player to remain paused
-            // because we don't offer a Play button, and potentially no Skip nor Close in some cases.
-            [strongSelf playVideo];
+
+        if (interruptionType.unsignedIntegerValue == AVAudioSessionInterruptionTypeBegan) {
+            [strongSelf.delegate videoPlayerViewAudioInterruptionDidBegin:strongSelf];
+        } else if (interruptionType.unsignedIntegerValue == AVAudioSessionInterruptionTypeEnded) {
+            [strongSelf.delegate videoPlayerViewAudioInterruptionDidEnd:strongSelf];
         }
     }];
 }
@@ -559,16 +545,6 @@ NSTimeInterval const kPlayTimeTolerance = 0.1;
             [strongSelf.delegate videoPlayerViewHideIndustryIcon:strongSelf];
         }];
     }
-}
-
-#pragma mark - Notification Handlers
-
-- (void)handleBackgroundNotification:(NSNotification *)notification {
-    [self pauseVideo];
-}
-
-- (void)handleForegroundNotification:(NSNotification *)notification {
-    [self playVideo];
 }
 
 @end

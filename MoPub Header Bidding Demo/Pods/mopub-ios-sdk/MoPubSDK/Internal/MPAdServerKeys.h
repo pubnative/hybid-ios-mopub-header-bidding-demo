@@ -22,6 +22,10 @@ extern NSString * const kSDKEngineVersionKey;
 extern NSString * const kOSKey;
 extern NSString * const kAdUnitKey;
 extern NSString * const kDeviceNameKey;
+extern NSString * const kDeviceMakeKey;
+extern NSString * const kDeviceModelKey;
+extern NSString * const kOSVKey;
+extern NSString * const kHWVKey;
 extern NSString * const kLocationAuthorizationStatusKey;
 extern NSString * const kIdentifierForAdvertiserKey;
 extern NSString * const kIdentifierForVendorKey;
@@ -138,3 +142,8 @@ extern NSString * const kSKAdNetworkLastSyncTimestampKey;
 extern NSString * const kSKAdNetworkLastSyncAppVersionKey;
 extern NSString * const kSKAdNetworkHashKey;
 extern NSString * const kSKAdNetworkSupportedNetworksKey;
+
+#pragma mark - Creative Experiences Keys
+
+extern NSString * const kCreativeExperiencesLastSyncHashKey;
+extern NSString * const kCreativeExperiencesSettingsKey;

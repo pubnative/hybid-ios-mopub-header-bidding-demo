@@ -16,7 +16,35 @@ NSString * const MPAdAdapterErrorDomain = @"MoPubRewardedAdsSDKDomain";
 @implementation NSError (MPAdAdapterError)
 
 + (NSError *)errorWithAdAdapterErrorCode:(MPAdAdapterErrorCode)code {
-    return [NSError errorWithAdAdapterErrorCode:code userInfo:@{}];
+    NSString *errorDescription;
+    switch (code) {
+        case MPAdAdapterErrorCodeUnknown:
+            errorDescription = @"Error unknown";
+            break;
+        case MPAdAdapterErrorCodeNoAdsAvailable:
+            errorDescription = @"No ads available";
+            break;
+        case MPAdAdapterErrorCodeInvalidAdapter:
+            errorDescription = @"Invalid adapter";
+            break;
+        case MPAdAdapterErrorCodeNoAdReady:
+            errorDescription = @"No ad ready";
+            break;
+        case MPAdAdapterErrorCodeInvalidAdUnitID:
+            errorDescription = @"Invalid ad unit ID";
+            break;
+        case MPAdAdapterErrorCodeInvalidReward:
+            errorDescription = @"Invalid reward";
+            break;
+        case MPAdAdapterErrorCodeNoRewardSelected:
+            errorDescription = @"No reward selected";
+            break;
+        default:
+            errorDescription = @"";
+            break;
+    }
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:errorDescription forKey:NSLocalizedDescriptionKey];
+    return [NSError errorWithAdAdapterErrorCode:code userInfo:userInfo];
 }
 
 + (NSError *)errorWithAdAdapterErrorCode:(MPAdAdapterErrorCode)code userInfo:(NSDictionary *)userInfo {

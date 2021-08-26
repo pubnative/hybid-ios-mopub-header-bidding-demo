@@ -37,6 +37,7 @@
     self.mraidController = [[MRController alloc] initWithAdViewFrame:adViewFrame
                                                supportedOrientations:configuration.orientationType
                                                      adPlacementType:MRAdViewPlacementTypeInline
+                                                         hideOverlay:NO
                                                             delegate:self];
     [self.mraidController loadAdWithConfiguration:configuration];
 }

@@ -46,6 +46,11 @@
 #import "MPRewardedVideoError.h" // Deprecated
 #import "MPRewardedVideoReward.h" // Deprecated
 #import "MPViewabilityOption.h"
+#import "MPDiskLRUCache.h"
+#import "MPMediaFileCache.h"
+#import "MPVASTMediaFile.h"
+#import "MPVASTModel.h"
+#import "MPVASTResource.h"
 
 #if __has_include("MPNativeAds.h")
     #import "MPNativeAds.h"

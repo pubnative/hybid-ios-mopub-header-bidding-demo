@@ -24,7 +24,6 @@ static NSString *const kMoPubExtensionType = @"MoPub";
 @property (nonatomic, strong) MPVASTLinearAd *linearAd;
 @property (nonatomic, strong) NSArray<NSURL *> *errorURLs;
 @property (nonatomic, strong) NSArray<NSURL *> *impressionURLs;
-@property (nonatomic, strong) MPVASTDurationOffset *skipOffset;
 @property (nonatomic, strong) NSString *callToActionButtonTitle;
 @property (nonatomic, strong) NSArray<MPVASTCompanionAd *> *companionAds;
 @property (nonatomic, strong) MPViewabilityContext *viewabilityContext;
@@ -56,12 +55,6 @@ static NSString *const kMoPubExtensionType = @"MoPub";
  Companion ads to be shown once the video has completed playback or is skipped.
  */
 @property (nonatomic, strong) NSArray<MPVASTCompanionAd *> *companionAds;
-
-/**
- The minimum amount of time (in seconds) that needs to elapse before the VAST video can be skipped by
- the user. If no skip offset is specified, the VAST video is immediately skippable.
-*/
-@property (nonatomic, strong) MPVASTDurationOffset *skipOffset;
 
 /**
  VAST video Event trackers for the Linear playback candidate.
@@ -104,7 +97,6 @@ additionalTrackers:(NSDictionary<MPVideoEvent, NSArray<MPVASTTrackingEvent *> *>
     _clickThroughURL = candidate.linearAd.clickThroughURL;
     _industryIcons = candidate.linearAd.industryIcons;
 
-    _skipOffset = candidate.skipOffset;
     _companionAds = candidate.companionAds;
     _viewabilityContext = candidate.viewabilityContext;
 
@@ -116,17 +108,6 @@ additionalTrackers:(NSDictionary<MPVideoEvent, NSArray<MPVASTTrackingEvent *> *>
 
     // Setup event tracker table
     self.trackingEventTable = [self trackingEventsFromCandidate:candidate additionalTrackers:additionalTrackers];
-}
-
-#pragma mark - Properties
-
-- (MPVASTDurationOffset * _Nullable)skipOffset {
-    // If the video is rewarded, do not use the skip offset for countdown timer purposes
-    if (self.isRewardExpected) {
-        return nil;
-    } else {
-        return _skipOffset;
-    }
 }
 
 #pragma mark - Playback Candidates
@@ -152,7 +133,6 @@ additionalTrackers:(NSDictionary<MPVideoEvent, NSArray<MPVASTTrackingEvent *> *>
             for (MPVASTCreative *creative in inlineAd.creatives) {
                 if (creative.linearAd && [creative.linearAd.mediaFiles count]) {
                     candidate.linearAd = creative.linearAd;
-                    candidate.skipOffset = creative.linearAd.skipOffset;
                     candidate.errorURLs = inlineAd.errorURLs;
                     candidate.impressionURLs = inlineAd.impressionURLs;
                     [candidates addObject:candidate];

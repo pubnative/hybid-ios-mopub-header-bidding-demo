@@ -15,7 +15,8 @@
     self = [self initWithAdContentType:MPAdContentTypeVideo];
     if (self) {
         self.adContainerView = [[MPAdContainerView alloc] initWithVideoURL:videoURL videoConfig:videoConfig];
-        self.adContainerView.countdownTimerDelegate = self;
+        self.adContainerView.delegate = self;
+        self.adContainerView.creativeExperienceSettings = self.creativeExperienceSettings;
     }
     return self;
 }
@@ -34,14 +35,6 @@
 
 - (void)stopVideo {
     [self.adContainerView stopVideo];
-}
-
-- (void)enableAppLifeCycleEventObservationForAutoPlayPause {
-    [self.adContainerView enableAppLifeCycleEventObservationForAutoPlayPause];
-}
-
-- (void)disableAppLifeCycleEventObservationForAutoPlayPause {
-    [self.adContainerView disableAppLifeCycleEventObservationForAutoPlayPause];
 }
 
 @end

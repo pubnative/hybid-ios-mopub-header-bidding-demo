@@ -31,4 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MPFullscreenAdAdapter (MPAdDestinationDisplayAgentDelegate) <MPAdDestinationDisplayAgentDelegate>
 @end
 
+@interface MPFullscreenAdAdapter (MPVideoPlayerDelegate) <MPVideoPlayerDelegate>
+@end
+
 NS_ASSUME_NONNULL_END

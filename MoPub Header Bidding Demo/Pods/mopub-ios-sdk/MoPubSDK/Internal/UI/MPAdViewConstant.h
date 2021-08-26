@@ -32,25 +32,4 @@ typedef NS_ENUM(NSUInteger, MPAdContentType) {
     MPAdContentTypeImage
 };
 
-typedef NS_ENUM(NSUInteger, MPAdViewCloseButtonLocation) {
-    MPAdViewCloseButtonLocationBottomCenter,
-    MPAdViewCloseButtonLocationBottomLeft,
-    MPAdViewCloseButtonLocationBottomRight,
-    MPAdViewCloseButtonLocationCenter,
-    MPAdViewCloseButtonLocationTopCenter,
-    MPAdViewCloseButtonLocationTopLeft,
-    MPAdViewCloseButtonLocationTopRight
-};
-
-typedef NS_ENUM(NSUInteger, MPAdViewCloseButtonType) {
-    /// The button is hidden.
-    MPAdViewCloseButtonTypeNone,
-
-    /// The button is not hidden, but is invisible without a button image. Hit box is still active.
-    MPAdViewCloseButtonTypeInvisibleButton,
-
-    /// The button is shown with a button image.
-    MPAdViewCloseButtonTypeImageButton
-};
-
 NS_ASSUME_NONNULL_END

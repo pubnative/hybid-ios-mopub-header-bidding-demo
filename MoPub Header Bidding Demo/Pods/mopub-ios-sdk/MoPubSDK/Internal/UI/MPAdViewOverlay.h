@@ -9,17 +9,33 @@
 #import <UIKit/UIKit.h>
 #import "MPAdViewConstant.h"
 #import "MPVASTIndustryIconView.h"
-#import "MPVideoPlayerViewOverlay.h"
 #import "MPViewabilityObstruction.h"
 #import "MPViewableView.h"
 
+@class MPAdViewOverlay, MPCreativeExperienceSettings;
+
+typedef NS_ENUM(NSUInteger, MPAdOverlayClickthroughType) {
+    /// Disable clickthrough.
+    MPAdOverlayClickthroughTypeNone,
+
+    /// Show the CTA button with the title provided in the @c MPAdViewOverlayConfig. This has
+    /// no effect if the config or CTA title are @c nil.
+    /// Triggers @c MPVideoEventClick event on click.
+    MPAdOverlayClickthroughTypeCallToAction,
+
+    /// Pass clicks through to the underlying content view.
+    MPAdOverlayClickthroughTypePassthrough
+};
+
+
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MPAdViewOverlayDelegate
-<
-MPVASTIndustryIconViewDelegate,
-MPVideoPlayerViewOverlayDelegate
->
+@protocol MPAdViewOverlayDelegate <NSObject, MPVASTIndustryIconViewDelegate>
+
+- (void)adViewOverlay:(MPAdViewOverlay *)overlay didTriggerEvent:(MPVideoEvent)event;
+
+- (void)adViewOverlayDidFinishCountdown:(MPAdViewOverlay *)overlay;
+
 @end
 
 /**
@@ -38,46 +54,68 @@ MPVideoPlayerViewOverlayDelegate
 @property (nonatomic, readonly) BOOL wasTapped;
 @property (nonatomic, weak) id<MPAdViewOverlayDelegate> delegate;
 
-/**
- Provided the ad size and Close button location, returns the frame of the Close button.
- Note: The provided ad size is assumed to be at least 50x50 (@c kMPAdViewCloseButtonSize), otherwise
- the return value is undefined.
-
- @param adSize The size of the ad.
- @param location The location of the close button.
- */
-+ (CGRect)closeButtonFrameForAdSize:(CGSize)adSize atLocation:(MPAdViewCloseButtonLocation)location;
-
-/**
- Set the Close button location with UI update. Only MRAID ads care, and all other ads default to top-right.
- */
-- (void)setCloseButtonLocation:(MPAdViewCloseButtonLocation)closeButtonLocation;
-
-/**
- Set the Close button location with UI update.
- */
-- (void)setCloseButtonType:(MPAdViewCloseButtonType)closeButtonType;
-
+#pragma mark - Timers
 /**
  Pause the timer.
  */
-- (void)pauseTimer;
+- (void)pause;
 
 /**
  Resume the timer.
 */
-- (void)resumeTimer;
+- (void)resume;
 
 /**
  Invalidates the timer.
  */
 - (void)stopTimer;
 
-@end
+#pragma mark - Controls
 
-#pragma mark -
+/**
+ Hide the close button, skip button, and countdown timer.
+ */
+- (void)hideControls;
 
-@interface MPAdViewOverlay (MPVideoPlayerViewOverlay) <MPVideoPlayerViewOverlay>
+/**
+ Delay for a duration, optionally showing the countdown timer with a delay of its own.
+ */
+- (void)delayForDuration:(NSTimeInterval)duration showCountdownTimer:(BOOL)showCountdownTimer countdownTimerDelay:(NSTimeInterval)countdownTimerDelay;
+
+/**
+ Show the close button.
+ */
+- (void)showCloseButton;
+
+/**
+ Show the skip button.
+ */
+- (void)showSkipButton;
+
+#pragma mark - Clickthrough
+
+/**
+ The clickthrough type for the overlay. Defaults to @c MPAdOverlayClickthroughTypePassthrough.
+ */
+@property (nonatomic, assign) MPAdOverlayClickthroughType clickthroughType;
+
+/**
+ The title for the CTA button.
+ */
+@property (nonatomic, assign) NSString *callToActionButtonTitle;
+
+#pragma mark - Industry Icon
+
+/**
+ Show the industry icon.
+ */
+- (void)showIndustryIcon:(MPVASTIndustryIcon *)icon;
+
+/**
+ Hide the industry icon.
+ */
+- (void)hideIndustryIcon;
+
 @end
 
 NS_ASSUME_NONNULL_END

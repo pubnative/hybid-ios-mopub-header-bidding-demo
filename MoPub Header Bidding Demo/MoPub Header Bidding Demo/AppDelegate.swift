@@ -20,8 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
 // Approach A - Step 3: Setup & Initialize HyBid SDK
-        HyBid.initWithAppToken(appToken, completion: nil)
-
+        HyBid.initWithAppToken(appToken) { success in
+                    if (success) {
+                        print("HyBid iOS SDK successfully initialized!")
+                    }
+                }
 // Approach A - Step 4: Setup & Initialize MoPub SDK
         let sdkConfig = MPMoPubConfiguration(adUnitIdForAppInitialization: adUnitID)
         sdkConfig.loggingLevel = .info

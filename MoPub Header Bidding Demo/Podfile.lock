@@ -1,21 +1,21 @@
 PODS:
-  - HyBid (2.6.1):
-    - HyBid/Banner (= 2.6.1)
-    - HyBid/Core (= 2.6.1)
-    - HyBid/FullScreen (= 2.6.1)
-    - HyBid/Native (= 2.6.1)
-    - HyBid/RewardedVideo (= 2.6.1)
-  - HyBid/Banner (2.6.1):
+  - HyBid (2.6.2):
+    - HyBid/Banner (= 2.6.2)
+    - HyBid/Core (= 2.6.2)
+    - HyBid/FullScreen (= 2.6.2)
+    - HyBid/Native (= 2.6.2)
+    - HyBid/RewardedVideo (= 2.6.2)
+  - HyBid/Banner (2.6.2):
     - HyBid/Core
-  - HyBid/Core (2.6.1)
-  - HyBid/FullScreen (2.6.1):
+  - HyBid/Core (2.6.2)
+  - HyBid/FullScreen (2.6.2):
     - HyBid/Core
-  - HyBid/Native (2.6.1):
+  - HyBid/Native (2.6.2):
     - HyBid/Core
-  - HyBid/RewardedVideo (2.6.1):
+  - HyBid/RewardedVideo (2.6.2):
     - HyBid/Core
-  - MoPub-HyBid-Adapters (2.6.1.0):
-    - HyBid (= 2.6.1)
+  - MoPub-HyBid-Adapters (2.6.2.0):
+    - HyBid (= 2.6.2)
     - mopub-ios-sdk (~> 5.18.0)
   - mopub-ios-sdk (5.18.0):
     - mopub-ios-sdk/MoPubSDK (= 5.18.0)
@@ -27,7 +27,7 @@ PODS:
     - mopub-ios-sdk/Core
 
 DEPENDENCIES:
-  - MoPub-HyBid-Adapters (= 2.6.1.0)
+  - MoPub-HyBid-Adapters (= 2.6.2.0)
 
 SPEC REPOS:
   trunk:
@@ -36,10 +36,10 @@ SPEC REPOS:
     - mopub-ios-sdk
 
 SPEC CHECKSUMS:
-  HyBid: c84a3a85bc818a4560ef6c0c5c678da7d33d618d
-  MoPub-HyBid-Adapters: aec626596c5b6d27d10cd5b60dc4ff1a83275770
+  HyBid: ba366a50fcf6677d703cf0f378889aa4641a98f1
+  MoPub-HyBid-Adapters: b752c93088295cae813512898d2037147447062e
   mopub-ios-sdk: d7b533646d96a075e578e8af9598794f2dfb7f7b
 
-PODFILE CHECKSUM: 21c250f05e2e3bdfd155ebe3efeabd310a8307a7
+PODFILE CHECKSUM: 30b39945c32366cb13688bae9d6af42ebc6d5b85
 
 COCOAPODS: 1.10.1

@@ -40,9 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         targeting.interests = ["music"]
         targeting.gender = "f"     // "f" for female, "m" for male
         HyBid.setTargeting(targeting)
-// Approach A - Step 10: Set AppStore App ID (iOS14 +)
-        HyBid.setAppStoreAppID(appStoreID)
-// Approach A Step 11: Set HyBid log level (Optional)
+// Approach A Step 10: Set HyBid log level (Optional)
         HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         
 /*
@@ -66,9 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             targeting.interests = ["music"]
             targeting.gender = "f"     // "f" for female, "m" for male
             HyBid.setTargeting(targeting)
-            // Approach B - Step 9: Set AppStore App ID (iOS14 +)
-            HyBid.setAppStoreAppID(self.appStoreID)
-            // Approach B Step 10: Set HyBid log level (Optional)
+            // Approach B Step 9: Set HyBid log level (Optional)
             HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         }
 */

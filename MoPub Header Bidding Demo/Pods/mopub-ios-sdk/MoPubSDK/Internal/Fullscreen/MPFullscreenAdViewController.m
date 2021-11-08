@@ -426,6 +426,18 @@
 
     self.interruptions &= ~interruption;
 
+    // There is an edge case in where foregrounding the app does
+    // not trigger a `AVAudioSessionInterruptionNotification` event with
+    // `AVAudioSessionInterruptionTypeEnded`. As such the pairing between
+    // start and end interruptions for `MPFullscreenAdInterruptionAudio` do
+    // not match.
+    // This is a workaround for that issue, but removing `MPFullscreenAdInterruptionAudio`
+    // from the bitmask if `MPFullscreenAdInterruptionBackground` is encountered.
+    // https://developer.apple.com/forums/thread/15514
+    if (interruption == MPFullscreenAdInterruptionBackground) {
+        self.interruptions &= ~MPFullscreenAdInterruptionAudio;
+    }
+
     // Resume when there are no interruptions left.
     if (self.interruptions == MPFullscreenAdInterruptionNone) {
         [self resume];

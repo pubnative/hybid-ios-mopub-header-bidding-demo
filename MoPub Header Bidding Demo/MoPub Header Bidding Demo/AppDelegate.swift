@@ -32,15 +32,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         HyBid.setTestMode(true)
 // Approach A - Step 7: Set Location Tracking (Optional)
         HyBid.setLocationTracking(true)
-// Approach A - Step 8: Set Interstitial skipOffet (Optional)
-        HyBid.setInterstitialSkipOffset(2)
-// Approach A - Step 9: Set Targetting (Optional)
+// Approach A - Step 8: Set HTML Interstitial skipOffset (Optional)
+        HyBid.setHTMLInterstitialSkipOffset(2)
+// Approach A - Step 9: Set Video Interstitial skipOffset (Optional)
+        HyBid.setVideoInterstitialSkipOffset(5)
+// Approach A - Step 10: Set Custom Click Behavior (Optional)
+        HyBid.setInterstitialActionBehaviour(HB_CREATIVE)
+// Approach A - Step 11: Set Targeting (Optional)
         let targeting = HyBidTargetingModel()
         targeting.age = 28
         targeting.interests = ["music"]
         targeting.gender = "f"     // "f" for female, "m" for male
         HyBid.setTargeting(targeting)
-// Approach A Step 10: Set HyBid log level (Optional)
+// Approach A Step 12: Set HyBid log level (Optional)
         HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         
 /*
@@ -56,15 +60,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             HyBid.setTestMode(true)
             // Approach B - Step 6: Set Location Tracking (Optional)
             HyBid.setLocationTracking(true)
-            // Approach B - Step 7: Set Interstitial skipOffet (Optional)
-            HyBid.setInterstitialSkipOffset(2)
-            // Approach B - Step 8: Set Targetting (Optional)
+            // Approach B - Step 7: Set HTML Interstitial skipOffset (Optional)
+            HyBid.setHTMLInterstitialSkipOffset(2)
+            // Approach B - Step 8: Set Video Interstitial skipOffset (Optional)
+            HyBid.setVideoInterstitialSkipOffset(5)
+            // Approach B - Step 9: Set Custom Click Behavior (Optional)
+            HyBid.setInterstitialActionBehaviour(HB_CREATIVE)
+            // Approach B - Step 10: Set Targeting (Optional)
             let targeting = HyBidTargetingModel()
             targeting.age = 28
             targeting.interests = ["music"]
             targeting.gender = "f"     // "f" for female, "m" for male
             HyBid.setTargeting(targeting)
-            // Approach B Step 9: Set HyBid log level (Optional)
+            // Approach B Step 11: Set HyBid log level (Optional)
             HyBidLogger.setLogLevel(HyBidLogLevelDebug)
         }
 */

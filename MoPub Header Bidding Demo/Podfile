@@ -6,5 +6,5 @@ target 'MoPub Header Bidding Demo' do
   use_frameworks!
 
   # Pods for MoPub Header Bidding Demo
-pod 'MoPub-HyBid-Adapters', '2.8.0.0'
+pod 'MoPub-HyBid-Adapters', '2.9.0.0'
 end

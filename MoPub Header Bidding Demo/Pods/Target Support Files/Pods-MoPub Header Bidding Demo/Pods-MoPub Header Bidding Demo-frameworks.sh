@@ -177,11 +177,13 @@ code_sign_if_enabled() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/HyBid/HyBid.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/mopub-ios-sdk/MoPubSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Pubnativenet/OMSDK_Pubnativenet.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Mopub/OMSDK_Mopub.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/HyBid/HyBid.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/mopub-ios-sdk/MoPubSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Pubnativenet/OMSDK_Pubnativenet.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Mopub/OMSDK_Mopub.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then

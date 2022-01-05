@@ -181,6 +181,7 @@
 #import "HyBidVASTResource.h"
 #import "HyBidVASTUniversalAdId.h"
 #import "HyBidVASTVerification.h"
+#import "HyBidVASTVerificationParameters.h"
 #import "HyBidVASTVideoClick.h"
 #import "HyBidVASTVideoClicks.h"
 #import "HyBidVASTXMLParserHelper.h"
